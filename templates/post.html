@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }} - Founderskorea{% endblock %}
+
+{% block content %}
+<div class="container">
+    <article class="post-detail">
+        <a href="/" class="back">&larr; 목록으로</a>
+        <h1>{{ post.title }}</h1>
+        <div class="meta">
+            <span class="tag">{{ post.tag }}</span>
+            <span>{{ post.date }}</span>
+            <span>{{ post.author }}</span>
+        </div>
+        <div class="post-content">
+            {{ post.content | safe }}
+        </div>
+    </article>
+</div>
+{% endblock %}

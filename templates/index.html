@@ -2,78 +2,320 @@
 {% block title %}Founderskorea - 대한민국 창업자를 위한 신뢰받는 정보 허브{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero hero--bg" style="background-image: url('/static/images/hero-bg.jpg');">
-    <div class="container">
-        <div class="hero--split">
-            <div class="hero-text">
-                <h1>대한민국 창업자를 위한<br>신뢰받는 정보 허브</h1>
-                <p>스타트업 트렌드, 정부지원사업, 투자 정보, 실전 노하우까지.<br>검증된 정보로 창업의 모든 여정을 함께합니다.</p>
-                <div class="hero-actions">
-                    <a href="/gov-support/db" class="btn btn-accent">정부지원사업 찾기</a>
-                    <a href="/onboarding" class="btn btn-outline-light">AI 매칭 시작</a>
-                </div>
-            </div>
-            <div class="hero-visual"></div>
-        </div>
-    </div>
-</section>
-
-<div class="container">
-    <!-- Gov Support Widget -->
-    <section class="gov-widget">
-        <div class="gov-widget-inner">
-            <div class="gov-widget-text">
-                <h3>나에게 맞는 정부지원사업 찾기</h3>
-                <p>5가지 질문에 답하면 맞춤 지원사업을 추천해드립니다. 30개 이상의 실제 정부지원사업 데이터베이스를 기반으로 분석합니다.</p>
-            </div>
-            <div class="gov-widget-cta">
-                <a href="/onboarding" class="btn btn-accent">무료 매칭 시작</a>
-                <a href="/gov-support/db" class="btn btn-outline-light">전체 사업 검색</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Category Previews -->
-    {% for cat in categories %}
-    {% set cat_posts = [] %}
-    {% for post in posts %}
-        {% if post.category and post.category.slug == cat.slug %}
-            {% if cat_posts|length < 3 %}
-                {% set _ = cat_posts.append(post) %}
-            {% endif %}
-        {% endif %}
-    {% endfor %}
-    {% if cat_posts|length > 0 %}
-    <section class="category-section">
-        <div class="section-header">
-            <h2>{{ cat.name }}</h2>
-            <a href="/{{ cat.slug }}">전체보기 &rarr;</a>
-        </div>
-        <div class="card-grid">
-            {% for post in cat_posts %}
-            <a href="/{{ cat.slug }}/{{ post.slug }}" class="post-card">
-                <div class="post-meta">
-                    <span class="badge badge-cat">{{ cat.name }}</span>
-                    {% if post.tag %}<span class="tag">{{ post.tag }}</span>{% endif %}
-                </div>
-                <h3>{{ post.title }}</h3>
-                <p>{{ post.summary }}</p>
-                <div class="post-date">{{ post.created_at.strftime('%Y.%m.%d') }}</div>
+<!-- News Ticker -->
+{% if ticker %}
+<div class="news-ticker">
+    <div class="ticker-label">최신</div>
+    <div class="ticker-track">
+        <div class="ticker-items">
+            {% for post in ticker %}
+            <a href="/{{ post.category.slug }}/{{ post.slug }}" class="ticker-item">
+                <span class="ticker-tag">{{ post.category.name }}</span>
+                {{ post.title }}
             </a>
             {% endfor %}
         </div>
-    </section>
-    {% endif %}
-    {% endfor %}
+    </div>
+</div>
+{% endif %}
 
-    {% if not posts %}
-    <section class="category-section">
-        <div class="section-header">
-            <h2>최근 글</h2>
+<!-- Top Banner -->
+<div class="container">
+    <div class="banner-slot banner-top">
+        <div class="banner-placeholder">
+            <span>2026년 상반기 정부지원사업 총정리</span>
+            <strong>나에게 맞는 지원사업 찾기</strong>
+            <a href="/gov-support/db" class="btn btn-accent btn-sm">지원사업 검색</a>
         </div>
-        <p class="text-secondary text-center mt-4 mb-4">아직 등록된 글이 없습니다.</p>
-    </section>
-    {% endif %}
+    </div>
+</div>
+
+<div class="container">
+    <div class="newspaper-layout">
+        <!-- ═══ MAIN CONTENT ═══ -->
+        <div class="main-content">
+
+            <!-- Hero: 1 Large + 3 Small -->
+            {% if featured %}
+            <section class="hero-news">
+                <div class="hero-main">
+                    <a href="/{{ featured.category.slug }}/{{ featured.slug }}" class="hero-card">
+                        <div class="hero-card-body">
+                            <span class="badge badge-cat">{{ featured.category.name }}</span>
+                            <h1>{{ featured.title }}</h1>
+                            <p>{{ featured.summary }}</p>
+                            <div class="hero-meta">
+                                <span>{{ featured.author }}</span>
+                                <span>{{ featured.created_at.strftime('%Y.%m.%d') }}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="hero-side">
+                    {% for post in sub_featured %}
+                    <a href="/{{ post.category.slug }}/{{ post.slug }}" class="hero-side-item">
+                        <span class="badge badge-cat">{{ post.category.name }}</span>
+                        <h3>{{ post.title }}</h3>
+                        <p>{{ post.summary[:60] }}...</p>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Section: 스타트업 (horizontal cards) -->
+            {% set cat_slug = "startup" %}
+            {% set cat_posts = posts_by_cat.get(cat_slug, []) %}
+            {% if cat_posts %}
+            <section class="news-section">
+                <div class="section-header">
+                    <h2>스타트업</h2>
+                    <a href="/startup">전체보기 &rarr;</a>
+                </div>
+                <div class="horizontal-list">
+                    {% for post in cat_posts[:4] %}
+                    <a href="/startup/{{ post.slug }}" class="card-horizontal">
+                        <div class="card-h-body">
+                            <div class="card-h-meta">
+                                <span class="badge badge-cat">{{ post.tag }}</span>
+                                <span class="card-date">{{ post.created_at.strftime('%m.%d') }}</span>
+                            </div>
+                            <h3>{{ post.title }}</h3>
+                            <p>{{ post.summary[:80] }}...</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- In-feed Banner -->
+            <div class="banner-slot banner-infeed">
+                <div class="banner-placeholder banner-wide">
+                    <span>5개 질문으로 맞춤 정부지원사업 추천받기</span>
+                    <a href="/onboarding" class="btn btn-outline-light btn-sm">매칭 시작 &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Section: 투자 (2-column mixed) -->
+            {% set cat_posts = posts_by_cat.get("investment", []) %}
+            {% if cat_posts %}
+            <section class="news-section">
+                <div class="section-header">
+                    <h2>투자</h2>
+                    <a href="/investment">전체보기 &rarr;</a>
+                </div>
+                <div class="mixed-grid">
+                    {% if cat_posts[0] %}
+                    <a href="/investment/{{ cat_posts[0].slug }}" class="card-large">
+                        <span class="badge badge-cat">{{ cat_posts[0].tag }}</span>
+                        <h3>{{ cat_posts[0].title }}</h3>
+                        <p>{{ cat_posts[0].summary }}</p>
+                        <div class="card-meta-bottom">
+                            <span>{{ cat_posts[0].author }}</span>
+                            <span>{{ cat_posts[0].created_at.strftime('%Y.%m.%d') }}</span>
+                        </div>
+                    </a>
+                    {% endif %}
+                    <div class="headline-list">
+                        {% for post in cat_posts[1:5] %}
+                        <a href="/investment/{{ post.slug }}" class="headline-item">
+                            <span class="hl-num">{{ loop.index }}</span>
+                            <div>
+                                <h4>{{ post.title }}</h4>
+                                <span class="card-date">{{ post.created_at.strftime('%m.%d') }} · {{ post.author }}</span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Section: 정부지원 (compact cards) -->
+            {% set cat_posts = posts_by_cat.get("gov-support", []) %}
+            {% if cat_posts %}
+            <section class="news-section">
+                <div class="section-header">
+                    <h2>정부지원</h2>
+                    <a href="/gov-support">전체보기 &rarr;</a>
+                </div>
+                <div class="compact-grid">
+                    {% for post in cat_posts[:6] %}
+                    <a href="/gov-support/{{ post.slug }}" class="card-compact">
+                        <div class="card-c-meta">
+                            <span class="badge badge-cat">{{ post.tag }}</span>
+                            <span class="card-date">{{ post.created_at.strftime('%m.%d') }}</span>
+                        </div>
+                        <h3>{{ post.title }}</h3>
+                        <p>{{ post.summary[:70] }}...</p>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Section: 실전노하우 (horizontal) -->
+            {% set cat_posts = posts_by_cat.get("know-how", []) %}
+            {% if cat_posts %}
+            <section class="news-section">
+                <div class="section-header">
+                    <h2>실전노하우</h2>
+                    <a href="/know-how">전체보기 &rarr;</a>
+                </div>
+                <div class="horizontal-list">
+                    {% for post in cat_posts[:4] %}
+                    <a href="/know-how/{{ post.slug }}" class="card-horizontal">
+                        <div class="card-h-body">
+                            <div class="card-h-meta">
+                                <span class="badge badge-cat">{{ post.tag }}</span>
+                                <span class="card-date">{{ post.created_at.strftime('%m.%d') }}</span>
+                            </div>
+                            <h3>{{ post.title }}</h3>
+                            <p>{{ post.summary[:80] }}...</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Section: 네트워킹 (headline list) -->
+            {% set cat_posts = posts_by_cat.get("networking", []) %}
+            {% if cat_posts %}
+            <section class="news-section">
+                <div class="section-header">
+                    <h2>네트워킹</h2>
+                    <a href="/networking">전체보기 &rarr;</a>
+                </div>
+                <div class="headline-list-full">
+                    {% for post in cat_posts[:5] %}
+                    <a href="/networking/{{ post.slug }}" class="headline-row">
+                        <span class="badge badge-cat">{{ post.tag }}</span>
+                        <h4>{{ post.title }}</h4>
+                        <span class="hl-meta">{{ post.author }} · {{ post.created_at.strftime('%m.%d') }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+        </div>
+
+        <!-- ═══ SIDEBAR ═══ -->
+        <aside class="sidebar">
+            <!-- Gov Support Quick Widget -->
+            <div class="sidebar-widget widget-gov">
+                <h3>정부지원사업 DB</h3>
+                <p>30개 이상의 정부지원사업을<br>한눈에 검색하세요</p>
+                <a href="/gov-support/db" class="btn btn-accent btn-sm" style="width:100%;justify-content:center;">사업 검색하기</a>
+                <a href="/onboarding" class="btn btn-outline btn-sm mt-2" style="width:100%;justify-content:center;">AI 맞춤 매칭</a>
+            </div>
+
+            <!-- Trending Articles -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">인기 기사</h3>
+                <div class="trending-list">
+                    {% for post in posts[:5] %}
+                    <a href="/{{ post.category.slug }}/{{ post.slug }}" class="trending-item">
+                        <span class="trending-rank">{{ loop.index }}</span>
+                        <div>
+                            <span class="trending-cat">{{ post.category.name }}</span>
+                            <h4>{{ post.title }}</h4>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Sidebar Banner -->
+            <div class="sidebar-widget widget-banner">
+                <div class="banner-placeholder banner-sidebar">
+                    <span style="font-size:0.75rem;color:var(--text-tertiary);">AD</span>
+                    <strong>스타트업 성장의 시작</strong>
+                    <span>Founderskorea와 함께</span>
+                </div>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="sidebar-widget widget-newsletter">
+                <h3>뉴스레터 구독</h3>
+                <p>매주 월요일, 창업자를 위한<br>핵심 뉴스를 보내드립니다</p>
+                <form class="newsletter-form" onsubmit="event.preventDefault();this.querySelector('.nl-btn').textContent='구독 완료!';">
+                    <input type="email" placeholder="이메일 주소" class="nl-input" required>
+                    <button type="submit" class="btn btn-primary btn-sm nl-btn" style="width:100%;">구독하기</button>
+                </form>
+            </div>
+
+            <!-- Upcoming Events -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">다가오는 행사</h3>
+                <div class="event-list">
+                    <div class="event-item">
+                        <div class="event-date-box">
+                            <span class="event-month">2월</span>
+                            <span class="event-day">20</span>
+                        </div>
+                        <div>
+                            <h4>디캠프 데모데이</h4>
+                            <span class="event-loc">선릉 디캠프</span>
+                        </div>
+                    </div>
+                    <div class="event-item">
+                        <div class="event-date-box">
+                            <span class="event-month">2월</span>
+                            <span class="event-day">27</span>
+                        </div>
+                        <div>
+                            <h4>서울핀테크랩 데모데이</h4>
+                            <span class="event-loc">여의도</span>
+                        </div>
+                    </div>
+                    <div class="event-item">
+                        <div class="event-date-box">
+                            <span class="event-month">3월</span>
+                            <span class="event-day">12</span>
+                        </div>
+                        <div>
+                            <h4>스파크랩 데모데이 19기</h4>
+                            <span class="event-loc">강남</span>
+                        </div>
+                    </div>
+                    <div class="event-item">
+                        <div class="event-date-box">
+                            <span class="event-month">4월</span>
+                            <span class="event-day">08</span>
+                        </div>
+                        <div>
+                            <h4>넥스트라이즈 2026</h4>
+                            <span class="event-loc">코엑스</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Banner 2 -->
+            <div class="sidebar-widget widget-banner">
+                <div class="banner-placeholder banner-sidebar">
+                    <span style="font-size:0.75rem;color:var(--text-tertiary);">AD</span>
+                    <strong>AWS 스타트업 크레딧</strong>
+                    <span>최대 1억원 지원</span>
+                </div>
+            </div>
+
+            <!-- Categories Quick Nav -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">카테고리</h3>
+                <div class="cat-nav-list">
+                    {% for cat in categories %}
+                    <a href="/{{ cat.slug }}" class="cat-nav-item">
+                        <span>{{ cat.name }}</span>
+                        <span class="cat-count">{{ posts_by_cat.get(cat.slug, [])|length }}건</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+    </div>
 </div>
 {% endblock %}

@@ -15,74 +15,525 @@
 
 {% block head_extra %}
 <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+<style>
+/* Hero Banner Styles */
+.program-hero {
+    background: linear-gradient(135deg, #1B365D 0%, #0D7377 100%);
+    color: white;
+    padding: 3rem 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+.program-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 300px;
+    background: rgba(212, 168, 83, 0.1);
+    border-radius: 50%;
+    transform: translate(30%, -30%);
+}
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+.hero-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+.hero-title-section h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.3;
+}
+.hero-organization {
+    font-size: 1rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+.hero-status-badge {
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.hero-status-badge.active {
+    background: #D4A853;
+    color: #1B365D;
+}
+.hero-status-badge.closed {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.5);
+}
+.hero-dday {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+/* Key Info Grid */
+.key-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+.key-info-card {
+    background: white;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+.key-info-card:hover {
+    border-color: #0D7377;
+    box-shadow: 0 4px 16px rgba(13, 115, 119, 0.1);
+    transform: translateY(-2px);
+}
+.key-info-label {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+.key-info-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1B365D;
+    line-height: 1.4;
+}
+.key-info-card.highlight .key-info-value {
+    color: #D4A853;
+    font-size: 1.5rem;
+}
+
+/* Section Styles */
+.detail-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e5e7eb;
+}
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+.section-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #0D7377, #1B365D);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1B365D;
+    margin: 0;
+}
+
+/* Eligibility Requirements */
+.eligibility-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.eligibility-list li {
+    padding: 1rem 1rem 1rem 3rem;
+    margin-bottom: 0.75rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    border-left: 4px solid #0D7377;
+    position: relative;
+}
+.eligibility-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 1rem;
+    color: #0D7377;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/* Timeline */
+.application-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+.timeline-item {
+    position: relative;
+    padding-bottom: 2rem;
+}
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    background: #0D7377;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px #0D7377;
+}
+.timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: -1.125rem;
+    top: 12px;
+    width: 2px;
+    height: calc(100% - 12px);
+    background: #e5e7eb;
+}
+.timeline-step {
+    font-weight: 700;
+    color: #1B365D;
+    margin-bottom: 0.25rem;
+}
+.timeline-desc {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Support Details */
+.support-benefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+.benefit-card {
+    background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+.benefit-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+.benefit-title {
+    font-weight: 700;
+    color: #1B365D;
+    margin-bottom: 0.5rem;
+}
+.benefit-desc {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #1B365D 0%, #0D7377 100%);
+    border-radius: 16px;
+    padding: 2.5rem;
+    text-align: center;
+    color: white;
+    margin: 3rem 0;
+}
+.cta-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.cta-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.cta-btn {
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.cta-btn-primary {
+    background: #D4A853;
+    color: #1B365D;
+}
+.cta-btn-primary:hover {
+    background: #e5b963;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(212, 168, 83, 0.3);
+}
+.cta-btn-secondary {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.5);
+}
+.cta-btn-secondary:hover {
+    background: rgba(255,255,255,0.25);
+    transform: translateY(-2px);
+}
+
+/* Similar Programs */
+.similar-programs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+.similar-program-card {
+    background: white;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+.similar-program-card:hover {
+    border-color: #0D7377;
+    box-shadow: 0 8px 24px rgba(13, 115, 119, 0.12);
+    transform: translateY(-4px);
+}
+.similar-program-title {
+    font-weight: 700;
+    color: #1B365D;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+.similar-program-org {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+}
+.similar-program-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.similar-tag {
+    padding: 0.25rem 0.75rem;
+    background: #f0f0f0;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .program-hero {
+        padding: 2rem 1.5rem;
+    }
+    .hero-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .hero-title-section h1 {
+        font-size: 1.5rem;
+    }
+    .key-info-grid {
+        grid-template-columns: 1fr;
+    }
+    .cta-buttons {
+        flex-direction: column;
+    }
+    .cta-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container-narrow">
-    <div class="program-detail">
-        <a href="/gov-support/db" class="back" style="display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 2rem; font-weight: 500;">&larr; 지원사업 목록</a>
+    <a href="/gov-support/db" class="back" style="display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem; font-weight: 500; text-decoration: none;">&larr; 지원사업 목록으로</a>
 
-        <h1>{{ program.title }}</h1>
-        <p style="color: var(--text-secondary); margin-bottom: 1rem;">{{ program.organization }}</p>
+    <!-- Hero Banner -->
+    <div class="program-hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <div class="hero-title-section">
+                    <h1>{{ program.title }}</h1>
+                    <p class="hero-organization">{{ program.organization }}</p>
+                </div>
+                <div>
+                    {% if program.status == '모집중' %}
+                    <div class="hero-status-badge active">모집중</div>
+                    {% else %}
+                    <div class="hero-status-badge closed">마감</div>
+                    {% endif %}
+                    {% if program.deadline and program.status == '모집중' %}
+                    <div class="hero-dday">
+                        📅 D-{{ (program.deadline - now).days if (program.deadline - now).days > 0 else 'day' }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div class="program-tags" style="margin-bottom: 2rem;">
-            <span class="badge badge-status">{{ program.status }}</span>
-            <span class="badge badge-type">{{ program.support_type }}</span>
-            <span class="badge badge-region">{{ program.region }}</span>
-            {% if program.funding_amount %}
-            <span class="badge" style="background: #f0fdf4; color: #16a34a;">{{ program.funding_amount }}</span>
-            {% endif %}
+    <!-- Key Info Grid -->
+    <div class="key-info-grid">
+        {% if program.funding_amount %}
+        <div class="key-info-card highlight">
+            <div class="key-info-label">지원금액</div>
+            <div class="key-info-value">{{ program.funding_amount }}</div>
+        </div>
+        {% endif %}
+
+        <div class="key-info-card">
+            <div class="key-info-label">지원유형</div>
+            <div class="key-info-value">{{ program.support_type or '정책자금' }}</div>
         </div>
 
-        <div class="program-info-grid">
-            {% if program.business_stage %}
-            <div class="info-item">
-                <div class="label">사업 단계</div>
-                <div class="value">{{ program.business_stage }}</div>
-            </div>
-            {% endif %}
-            {% if program.business_size %}
-            <div class="info-item">
-                <div class="label">기업 규모</div>
-                <div class="value">{{ program.business_size }}</div>
-            </div>
-            {% endif %}
-            {% if program.industry %}
-            <div class="info-item">
-                <div class="label">업종</div>
-                <div class="value">{{ program.industry }}</div>
-            </div>
-            {% endif %}
-            {% if program.deadline %}
-            <div class="info-item">
-                <div class="label">신청 마감일</div>
-                <div class="value">{{ program.deadline.strftime('%Y.%m.%d') }}</div>
-            </div>
-            {% endif %}
-            {% if program.funding_amount %}
-            <div class="info-item">
-                <div class="label">지원금액</div>
-                <div class="value">{{ program.funding_amount }}</div>
-            </div>
-            {% endif %}
-            {% if program.url %}
-            <div class="info-item">
-                <div class="label">공식 링크</div>
-                <div class="value"><a href="{{ program.url }}" target="_blank" rel="noopener">공식 페이지 바로가기</a></div>
-            </div>
-            {% endif %}
+        <div class="key-info-card">
+            <div class="key-info-label">대상지역</div>
+            <div class="key-info-value">{{ program.region or '전국' }}</div>
         </div>
 
-        <h2 style="font-size: 1.2rem; font-weight: 700; margin: 2rem 0 1rem;">사업 설명</h2>
+        {% if program.deadline %}
+        <div class="key-info-card">
+            <div class="key-info-label">모집기간</div>
+            <div class="key-info-value">~ {{ program.deadline.strftime('%Y.%m.%d') }}</div>
+        </div>
+        {% endif %}
+
+        <div class="key-info-card">
+            <div class="key-info-label">주관기관</div>
+            <div class="key-info-value" style="font-size: 1rem;">{{ program.organization }}</div>
+        </div>
+    </div>
+
+    <!-- Program Description -->
+    <div class="detail-section">
+        <div class="section-header">
+            <div class="section-icon">📋</div>
+            <h2 class="section-title">사업 개요</h2>
+        </div>
         <div class="post-content">
-            <p>{{ program.description }}</p>
+            {% if program.description_html %}
+                {{ program.description_html | safe }}
+            {% else %}
+                <p style="line-height: 1.8; color: #374151;">{{ program.description }}</p>
+            {% endif %}
         </div>
+    </div>
 
-        {% if program.application_kit %}
-        <h2 style="font-size: 1.2rem; font-weight: 700; margin: 2rem 0 1rem;">신청 키트</h2>
+    <!-- Eligibility Requirements -->
+    {% if program.eligibility %}
+    <div class="detail-section">
+        <div class="section-header">
+            <div class="section-icon">✓</div>
+            <h2 class="section-title">신청 자격</h2>
+        </div>
+        <ul class="eligibility-list">
+            {% for requirement in program.eligibility.split('\n') if requirement.strip() %}
+            <li>{{ requirement.strip() }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- Application Process Timeline -->
+    <div class="detail-section">
+        <div class="section-header">
+            <div class="section-icon">🔄</div>
+            <h2 class="section-title">신청 절차</h2>
+        </div>
+        <div class="application-timeline">
+            <div class="timeline-item">
+                <div class="timeline-step">1단계: 사업공고 및 접수</div>
+                <div class="timeline-desc">온라인 신청서 작성 및 필수 서류 제출</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-step">2단계: 서류심사</div>
+                <div class="timeline-desc">제출 서류 및 신청 자격 검토</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-step">3단계: 발표평가 (해당시)</div>
+                <div class="timeline-desc">사업계획 발표 및 전문가 평가</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-step">4단계: 최종선정 발표</div>
+                <div class="timeline-desc">선정 결과 통보 및 협약 안내</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-step">5단계: 협약 체결</div>
+                <div class="timeline-desc">사업 수행 협약 및 지원금 지급</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Details -->
+    <div class="detail-section">
+        <div class="section-header">
+            <div class="section-icon">💎</div>
+            <h2 class="section-title">지원 혜택</h2>
+        </div>
+        <div class="support-benefits">
+            <div class="benefit-card">
+                <div class="benefit-icon">💰</div>
+                <div class="benefit-title">사업화 자금</div>
+                <div class="benefit-desc">제품 개발 및 사업화를 위한 직접 지원금</div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">🎓</div>
+                <div class="benefit-title">전문 컨설팅</div>
+                <div class="benefit-desc">분야별 전문가 멘토링 및 교육 프로그램</div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">🤝</div>
+                <div class="benefit-title">네트워킹</div>
+                <div class="benefit-desc">투자자·기업 연계 및 IR 기회 제공</div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">🏢</div>
+                <div class="benefit-title">공간 지원</div>
+                <div class="benefit-desc">사무공간 및 시설 사용 지원</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Kit (if exists) -->
+    {% if program.application_kit %}
+    <div class="detail-section">
+        <div class="section-header">
+            <div class="section-icon">📦</div>
+            <h2 class="section-title">신청 키트</h2>
+        </div>
         {% if program.application_kit.checklist_html %}
-        <div class="kit-checklist">
-            <h3>체크리스트</h3>
+        <div style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: #1B365D; margin-bottom: 1rem;">체크리스트</h3>
             {{ program.application_kit.checklist_html | safe }}
         </div>
         {% endif %}
@@ -91,15 +542,51 @@
             {{ program.application_kit.guide_html | safe }}
         </div>
         {% endif %}
-        {% endif %}
+    </div>
+    {% endif %}
 
-        <h2 style="font-size: 1.2rem; font-weight: 700; margin: 2rem 0 1rem;">커뮤니티 리뷰</h2>
+    <!-- CTA Section -->
+    <div class="cta-section">
+        <h2 class="cta-title">지금 바로 신청하세요</h2>
+        <p class="cta-subtitle">당신의 비즈니스를 다음 단계로 끌어올릴 기회입니다</p>
+        <div class="cta-buttons">
+            {% if program.apply_url %}
+            <a href="{{ program.apply_url }}" target="_blank" rel="noopener" class="cta-btn cta-btn-primary">
+                신청하기 →
+            </a>
+            {% endif %}
+            <a href="/gov-support/db" class="cta-btn cta-btn-secondary">
+                🤖 AI 매칭으로 더 찾기
+            </a>
+        </div>
+    </div>
+
+    <!-- Similar Programs -->
+    <div class="detail-section">
+        <div class="section-header">
+            <div class="section-icon">🔍</div>
+            <h2 class="section-title">비슷한 지원사업</h2>
+        </div>
+        <p style="color: #666; margin-bottom: 1.5rem;">이 사업과 유사한 다른 지원 프로그램을 확인해보세요</p>
+        <div style="text-align: center; padding: 2rem;">
+            <a href="/gov-support/db" class="cta-btn cta-btn-secondary" style="display: inline-flex; background: #1B365D; border: none;">
+                전체 지원사업 둘러보기 →
+            </a>
+        </div>
+    </div>
+
+    <!-- Community Reviews -->
+    <div class="detail-section">
+        <div class="section-header">
+            <div class="section-icon">💬</div>
+            <h2 class="section-title">커뮤니티 리뷰</h2>
+        </div>
         <div id="reviewSection">
             {% include "gov_support/_reviews.html" %}
         </div>
 
-        <div class="review-form">
-            <h3>리뷰 남기기</h3>
+        <div class="review-form" style="margin-top: 2rem; padding: 2rem; background: #f9fafb; border-radius: 12px;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; color: #1B365D; margin-bottom: 1.5rem;">리뷰 남기기</h3>
             <form hx-post="/gov-support/db/{{ program.id }}/review" hx-target="#reviewSection" hx-swap="innerHTML">
                 <div class="form-group">
                     <label>닉네임</label>
@@ -132,9 +619,19 @@
                     <label>꿀팁 (선택)</label>
                     <textarea name="tip" placeholder="신청 시 도움되는 팁이 있다면 공유해주세요..." style="min-height: 60px;"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">리뷰 등록</button>
+                <button type="submit" class="btn btn-primary" style="background: #1B365D; padding: 0.75rem 2rem; border-radius: 8px;">리뷰 등록</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+// D-day calculation fallback if template var not available
+document.addEventListener('DOMContentLoaded', function() {
+    const ddayElement = document.querySelector('.hero-dday');
+    if (ddayElement && ddayElement.textContent.includes('now')) {
+        ddayElement.style.display = 'none';
+    }
+});
+</script>
 {% endblock %}

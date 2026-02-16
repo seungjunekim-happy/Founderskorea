@@ -2,148 +2,720 @@
 {% block title %}AI 매칭 - 나에게 맞는 정부지원사업 찾기 - Founderskorea{% endblock %}
 
 {% block content %}
-<div class="quiz-container">
-    <h1 style="font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 0.5rem;">나에게 맞는 지원사업 찾기</h1>
-    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">5가지 질문에 답하면 맞춤 지원사업을 추천해드려요.</p>
+<style>
+/* ═══ AI Quiz Page Styles ═══ */
+.ai-quiz-hero {
+    background: linear-gradient(135deg, #1B365D 0%, #0D7377 50%, #1B365D 100%);
+    background-size: 200% 200%;
+    animation: heroShift 8s ease infinite;
+    padding: 3rem 1.5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+@keyframes heroShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+.ai-quiz-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(212, 168, 83, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(13, 115, 119, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+}
+/* Neural network dots */
+.ai-quiz-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+}
+.ai-quiz-hero h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+.ai-quiz-hero h1 span {
+    background: linear-gradient(135deg, #D4A853, #f0d48a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.ai-quiz-hero .hero-sub {
+    color: rgba(255,255,255,0.8);
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.6;
+}
+/* AI badge row */
+.ai-badges {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+}
+.ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.9);
+    font-weight: 500;
+}
+.ai-badge .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #D4A853;
+    animation: pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+}
+/* Stats bar */
+.ai-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+}
+.ai-stat {
+    background: var(--bg);
+    padding: 1rem;
+    text-align: center;
+}
+.ai-stat .stat-num {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.02em;
+}
+.ai-stat .stat-label {
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+    margin-top: 0.15rem;
+    font-weight: 500;
+}
+/* Quiz container */
+.ai-quiz-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+}
+/* Progress bar */
+.ai-progress {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2rem;
+    position: relative;
+}
+.ai-prog-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+.ai-prog-step .prog-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    transition: all 0.4s ease;
+    position: relative;
+}
+.ai-prog-step.active .prog-circle {
+    border-color: var(--secondary);
+    color: var(--secondary);
+    box-shadow: 0 0 0 4px rgba(13, 115, 119, 0.12);
+}
+.ai-prog-step.done .prog-circle {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: #fff;
+}
+.ai-prog-step.done .prog-circle::after {
+    content: '\2713';
+}
+.ai-prog-step .prog-label {
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    margin-top: 0.35rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.ai-prog-step.active .prog-label { color: var(--secondary); font-weight: 600; }
+.ai-prog-step.done .prog-label { color: var(--secondary); }
+/* Connecting line */
+.ai-prog-line {
+    position: absolute;
+    top: 18px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+}
+.ai-prog-line .line-fill {
+    height: 100%;
+    background: var(--secondary);
+    transition: width 0.5s ease;
+    width: 0%;
+    border-radius: 2px;
+}
+/* Step card */
+.ai-step-card {
+    display: none;
+    background: var(--bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 2rem 1.5rem;
+    position: relative;
+    border: 1px solid var(--border-light);
+}
+.ai-step-card.active {
+    display: block;
+    animation: stepIn 0.4s ease;
+}
+@keyframes stepIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.ai-step-card .step-header {
+    margin-bottom: 1.5rem;
+}
+.ai-step-card .step-header .step-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--secondary);
+    background: rgba(13, 115, 119, 0.08);
+    padding: 0.25rem 0.65rem;
+    border-radius: 100px;
+    margin-bottom: 0.75rem;
+}
+.ai-step-card .step-header .step-tag .tag-icon {
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ai-step-card .step-header h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.01em;
+}
+.ai-step-card .step-header p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+}
+/* Options */
+.ai-options {
+    display: grid;
+    gap: 0.6rem;
+}
+.ai-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+}
+.ai-option:hover {
+    border-color: var(--secondary-light);
+    background: rgba(13, 115, 119, 0.02);
+}
+.ai-option.selected {
+    border-color: var(--secondary);
+    background: rgba(13, 115, 119, 0.04);
+    box-shadow: 0 0 0 3px rgba(13, 115, 119, 0.08);
+}
+.ai-option input[type="radio"] {
+    display: none;
+}
+.ai-option .opt-radio {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+    position: relative;
+}
+.ai-option.selected .opt-radio {
+    border-color: var(--secondary);
+    background: var(--secondary);
+}
+.ai-option.selected .opt-radio::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+}
+.ai-option .opt-icon {
+    font-size: 1.2rem;
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.ai-option .opt-text {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text);
+}
+.ai-option .opt-desc {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    font-weight: 400;
+}
+/* Navigation */
+.ai-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-light);
+}
+.ai-nav .nav-prev {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    transition: color 0.2s;
+}
+.ai-nav .nav-prev:hover { color: var(--text); }
+.ai-nav .nav-next,
+.ai-nav .nav-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(13, 115, 119, 0.25);
+}
+.ai-nav .nav-next:hover,
+.ai-nav .nav-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(13, 115, 119, 0.35);
+}
+.ai-nav .nav-submit {
+    background: linear-gradient(135deg, #D4A853, #B8903D);
+    box-shadow: 0 2px 8px rgba(212, 168, 83, 0.3);
+}
+.ai-nav .nav-submit:hover {
+    box-shadow: 0 4px 16px rgba(212, 168, 83, 0.4);
+}
+/* AI analysis indicator */
+.ai-analysis-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(27, 54, 93, 0.03);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+.ai-analysis-hint .analysis-dots {
+    display: flex;
+    gap: 3px;
+}
+.ai-analysis-hint .analysis-dots span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--secondary);
+    animation: analysisPulse 1.4s ease infinite;
+}
+.ai-analysis-hint .analysis-dots span:nth-child(2) { animation-delay: 0.2s; }
+.ai-analysis-hint .analysis-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes analysisPulse {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+}
+/* Neural overlay decorative */
+.neural-canvas {
+    position: absolute;
+    top: 0; right: 0;
+    width: 180px; height: 180px;
+    opacity: 0.08;
+    pointer-events: none;
+}
+/* Responsive */
+@media (max-width: 640px) {
+    .ai-quiz-hero { padding: 2rem 1rem 1.5rem; }
+    .ai-quiz-hero h1 { font-size: 1.5rem; }
+    .ai-badges { gap: 0.4rem; }
+    .ai-badge { font-size: 0.7rem; padding: 0.3rem 0.65rem; }
+    .ai-stat .stat-num { font-size: 1rem; }
+    .ai-step-card { padding: 1.5rem 1rem; }
+    .ai-prog-step .prog-label { font-size: 0.6rem; }
+}
+</style>
+
+<!-- Hero section -->
+<section class="ai-quiz-hero">
+    <h1><span>AI</span> 맞춤 매칭 시스템</h1>
+    <p class="hero-sub">딥러닝 기반 알고리즘이 30개 이상의 정부지원사업을 분석하여<br>당신에게 최적의 프로그램을 찾아드립니다.</p>
+    <div class="ai-badges">
+        <div class="ai-badge"><span class="badge-dot"></span> Neural Matching v3.2</div>
+        <div class="ai-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            데이터 보호
+        </div>
+        <div class="ai-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            실시간 분석
+        </div>
+    </div>
+</section>
+
+<!-- Stats bar -->
+<div class="ai-stats-bar">
+    <div class="ai-stat">
+        <div class="stat-num">12,847명</div>
+        <div class="stat-label">매칭 완료</div>
+    </div>
+    <div class="ai-stat">
+        <div class="stat-num">94.2%</div>
+        <div class="stat-label">평균 매칭 정확도</div>
+    </div>
+    <div class="ai-stat">
+        <div class="stat-num">30+</div>
+        <div class="stat-label">정부지원사업 분석</div>
+    </div>
+</div>
+
+<!-- Quiz body -->
+<div class="ai-quiz-wrap">
+    <!-- Progress -->
+    <div class="ai-progress">
+        <div class="ai-prog-line"><div class="line-fill" id="progFill"></div></div>
+        <div class="ai-prog-step active" id="prog1">
+            <div class="prog-circle">1</div>
+            <div class="prog-label">업종</div>
+        </div>
+        <div class="ai-prog-step" id="prog2">
+            <div class="prog-circle">2</div>
+            <div class="prog-label">단계</div>
+        </div>
+        <div class="ai-prog-step" id="prog3">
+            <div class="prog-circle">3</div>
+            <div class="prog-label">규모</div>
+        </div>
+        <div class="ai-prog-step" id="prog4">
+            <div class="prog-circle">4</div>
+            <div class="prog-label">지역</div>
+        </div>
+        <div class="ai-prog-step" id="prog5">
+            <div class="prog-circle">5</div>
+            <div class="prog-label">관심분야</div>
+        </div>
+    </div>
 
     <form action="/onboarding" method="post" id="quizForm">
-        <div class="quiz-progress">
-            <div class="step active" id="prog1"></div>
-            <div class="step" id="prog2"></div>
-            <div class="step" id="prog3"></div>
-            <div class="step" id="prog4"></div>
-            <div class="step" id="prog5"></div>
-        </div>
-
         <!-- Step 1: 업종 -->
-        <div class="quiz-step active" id="step1">
-            <h2>어떤 업종인가요?</h2>
-            <p>주요 사업 분야를 선택해주세요.</p>
-            <div class="quiz-options">
-                <label class="quiz-option" onclick="selectOption(this, 'industry')">
-                    <input type="radio" name="industry" value="IT,소프트웨어">IT / 소프트웨어
+        <div class="ai-step-card active" id="step1">
+            <svg class="neural-canvas" viewBox="0 0 180 180"><circle cx="30" cy="30" r="3" fill="currentColor"/><circle cx="90" cy="20" r="3" fill="currentColor"/><circle cx="150" cy="40" r="3" fill="currentColor"/><circle cx="60" cy="90" r="3" fill="currentColor"/><circle cx="120" cy="80" r="3" fill="currentColor"/><circle cx="40" cy="150" r="3" fill="currentColor"/><circle cx="100" cy="140" r="3" fill="currentColor"/><circle cx="160" cy="130" r="3" fill="currentColor"/><line x1="30" y1="30" x2="90" y2="20" stroke="currentColor" stroke-width="0.5"/><line x1="90" y1="20" x2="150" y2="40" stroke="currentColor" stroke-width="0.5"/><line x1="30" y1="30" x2="60" y2="90" stroke="currentColor" stroke-width="0.5"/><line x1="90" y1="20" x2="120" y2="80" stroke="currentColor" stroke-width="0.5"/><line x1="150" y1="40" x2="120" y2="80" stroke="currentColor" stroke-width="0.5"/><line x1="60" y1="90" x2="100" y2="140" stroke="currentColor" stroke-width="0.5"/><line x1="120" y1="80" x2="160" y2="130" stroke="currentColor" stroke-width="0.5"/><line x1="60" y1="90" x2="40" y2="150" stroke="currentColor" stroke-width="0.5"/><line x1="100" y1="140" x2="160" y2="130" stroke="currentColor" stroke-width="0.5"/></svg>
+            <div class="step-header">
+                <div class="step-tag">
+                    <span class="tag-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+                    STEP 1 / 5 &mdash; 업종 분석
+                </div>
+                <h2>어떤 업종인가요?</h2>
+                <p>AI가 업종별 최적 지원사업을 분석합니다.</p>
+            </div>
+            <div class="ai-options">
+                <label class="ai-option" onclick="selectOption(this, 'industry')">
+                    <input type="radio" name="industry" value="IT,소프트웨어">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#128187;</span>
+                    <span><span class="opt-text">IT / 소프트웨어</span><br><span class="opt-desc">SaaS, 앱, 플랫폼, AI/ML</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'industry')">
-                    <input type="radio" name="industry" value="제조,하드웨어">제조 / 하드웨어
+                <label class="ai-option" onclick="selectOption(this, 'industry')">
+                    <input type="radio" name="industry" value="제조,하드웨어">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#9881;&#65039;</span>
+                    <span><span class="opt-text">제조 / 하드웨어</span><br><span class="opt-desc">IoT, 스마트팩토리, 장비</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'industry')">
-                    <input type="radio" name="industry" value="바이오,헬스케어">바이오 / 헬스케어
+                <label class="ai-option" onclick="selectOption(this, 'industry')">
+                    <input type="radio" name="industry" value="바이오,헬스케어">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#129514;</span>
+                    <span><span class="opt-text">바이오 / 헬스케어</span><br><span class="opt-desc">의료기기, 신약, 디지털헬스</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'industry')">
-                    <input type="radio" name="industry" value="콘텐츠,미디어">콘텐츠 / 미디어
+                <label class="ai-option" onclick="selectOption(this, 'industry')">
+                    <input type="radio" name="industry" value="콘텐츠,미디어">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#127916;</span>
+                    <span><span class="opt-text">콘텐츠 / 미디어</span><br><span class="opt-desc">영상, 게임, IP, 크리에이터</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'industry')">
-                    <input type="radio" name="industry" value="유통,커머스">유통 / 커머스
+                <label class="ai-option" onclick="selectOption(this, 'industry')">
+                    <input type="radio" name="industry" value="유통,커머스">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#128722;</span>
+                    <span><span class="opt-text">유통 / 커머스</span><br><span class="opt-desc">이커머스, D2C, 물류</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'industry')">
-                    <input type="radio" name="industry" value="ESG,소셜벤처">ESG / 소셜벤처
+                <label class="ai-option" onclick="selectOption(this, 'industry')">
+                    <input type="radio" name="industry" value="ESG,소셜벤처">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#127793;</span>
+                    <span><span class="opt-text">ESG / 소셜벤처</span><br><span class="opt-desc">환경, 사회적기업, 임팩트</span></span>
                 </label>
             </div>
-            <div class="quiz-nav">
+            <div class="ai-nav">
                 <div></div>
-                <button type="button" class="btn btn-primary" onclick="nextStep(2)">다음</button>
+                <button type="button" class="nav-next" onclick="nextStep(2)">다음 단계 &rarr;</button>
             </div>
         </div>
 
         <!-- Step 2: 사업 단계 -->
-        <div class="quiz-step" id="step2">
-            <h2>현재 사업 단계는?</h2>
-            <p>가장 가까운 단계를 선택해주세요.</p>
-            <div class="quiz-options">
-                <label class="quiz-option" onclick="selectOption(this, 'business_stage')">
-                    <input type="radio" name="business_stage" value="예비창업">예비창업 (아이디어 단계)
+        <div class="ai-step-card" id="step2">
+            <div class="step-header">
+                <div class="step-tag">
+                    <span class="tag-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg></span>
+                    STEP 2 / 5 &mdash; 성장 단계 파악
+                </div>
+                <h2>현재 사업 단계는?</h2>
+                <p>단계별 맞춤 지원 전략을 설계합니다.</p>
+            </div>
+            <div class="ai-options">
+                <label class="ai-option" onclick="selectOption(this, 'business_stage')">
+                    <input type="radio" name="business_stage" value="예비창업">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#128161;</span>
+                    <span><span class="opt-text">예비창업</span><br><span class="opt-desc">아이디어 단계, 사업자등록 전</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'business_stage')">
-                    <input type="radio" name="business_stage" value="초기">초기 (사업자등록 1년 이내)
+                <label class="ai-option" onclick="selectOption(this, 'business_stage')">
+                    <input type="radio" name="business_stage" value="초기">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#128640;</span>
+                    <span><span class="opt-text">초기 스타트업</span><br><span class="opt-desc">사업자등록 1년 이내</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'business_stage')">
-                    <input type="radio" name="business_stage" value="성장기">성장기 (1-3년)
+                <label class="ai-option" onclick="selectOption(this, 'business_stage')">
+                    <input type="radio" name="business_stage" value="성장기">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#128200;</span>
+                    <span><span class="opt-text">성장기</span><br><span class="opt-desc">1~3년, 매출 발생 단계</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'business_stage')">
-                    <input type="radio" name="business_stage" value="도약기">도약기 (3년 이상)
+                <label class="ai-option" onclick="selectOption(this, 'business_stage')">
+                    <input type="radio" name="business_stage" value="도약기">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#127942;</span>
+                    <span><span class="opt-text">도약기</span><br><span class="opt-desc">3년 이상, 스케일업 단계</span></span>
                 </label>
             </div>
-            <div class="quiz-nav">
-                <button type="button" class="btn btn-outline" onclick="prevStep(1)">이전</button>
-                <button type="button" class="btn btn-primary" onclick="nextStep(3)">다음</button>
+            <div class="ai-nav">
+                <button type="button" class="nav-prev" onclick="prevStep(1)">&larr; 이전</button>
+                <button type="button" class="nav-next" onclick="nextStep(3)">다음 단계 &rarr;</button>
             </div>
         </div>
 
         <!-- Step 3: 기업 규모 -->
-        <div class="quiz-step" id="step3">
-            <h2>기업 규모는?</h2>
-            <p>현재 팀 규모를 알려주세요.</p>
-            <div class="quiz-options">
-                <label class="quiz-option" onclick="selectOption(this, 'business_size')">
-                    <input type="radio" name="business_size" value="1인">1인 (솔로 창업)
+        <div class="ai-step-card" id="step3">
+            <div class="step-header">
+                <div class="step-tag">
+                    <span class="tag-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                    STEP 3 / 5 &mdash; 규모 분석
+                </div>
+                <h2>기업 규모는?</h2>
+                <p>팀 규모에 적합한 지원 유형을 매칭합니다.</p>
+            </div>
+            <div class="ai-options">
+                <label class="ai-option" onclick="selectOption(this, 'business_size')">
+                    <input type="radio" name="business_size" value="1인">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#129489;</span>
+                    <span><span class="opt-text">1인 (솔로 창업)</span><br><span class="opt-desc">개인사업자 또는 프리랜서</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'business_size')">
-                    <input type="radio" name="business_size" value="소기업">소기업 (2-10인)
+                <label class="ai-option" onclick="selectOption(this, 'business_size')">
+                    <input type="radio" name="business_size" value="소기업">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#128101;</span>
+                    <span><span class="opt-text">소기업 (2-10인)</span><br><span class="opt-desc">소규모 팀 운영 중</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'business_size')">
-                    <input type="radio" name="business_size" value="중소기업">중소기업 (11-50인)
+                <label class="ai-option" onclick="selectOption(this, 'business_size')">
+                    <input type="radio" name="business_size" value="중소기업">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#127970;</span>
+                    <span><span class="opt-text">중소기업 (11-50인)</span><br><span class="opt-desc">조직 구조를 갖춘 기업</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'business_size')">
-                    <input type="radio" name="business_size" value="중기업">중기업 (50인 이상)
+                <label class="ai-option" onclick="selectOption(this, 'business_size')">
+                    <input type="radio" name="business_size" value="중기업">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#127963;&#65039;</span>
+                    <span><span class="opt-text">중기업 (50인 이상)</span><br><span class="opt-desc">부서별 전문 인력 보유</span></span>
                 </label>
             </div>
-            <div class="quiz-nav">
-                <button type="button" class="btn btn-outline" onclick="prevStep(2)">이전</button>
-                <button type="button" class="btn btn-primary" onclick="nextStep(4)">다음</button>
+            <div class="ai-nav">
+                <button type="button" class="nav-prev" onclick="prevStep(2)">&larr; 이전</button>
+                <button type="button" class="nav-next" onclick="nextStep(4)">다음 단계 &rarr;</button>
             </div>
         </div>
 
         <!-- Step 4: 지역 -->
-        <div class="quiz-step" id="step4">
-            <h2>사업 소재지는?</h2>
-            <p>사업장이 위치한 지역을 선택해주세요.</p>
-            <div class="quiz-options">
-                <label class="quiz-option" onclick="selectOption(this, 'region')">
-                    <input type="radio" name="region" value="서울">서울
+        <div class="ai-step-card" id="step4">
+            <div class="step-header">
+                <div class="step-tag">
+                    <span class="tag-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+                    STEP 4 / 5 &mdash; 지역 매칭
+                </div>
+                <h2>사업 소재지는?</h2>
+                <p>지역 특화 지원사업을 포함하여 분석합니다.</p>
+            </div>
+            <div class="ai-options">
+                <label class="ai-option" onclick="selectOption(this, 'region')">
+                    <input type="radio" name="region" value="서울">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#127961;&#65039;</span>
+                    <span><span class="opt-text">서울</span><br><span class="opt-desc">서울특별시 전 지역</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'region')">
-                    <input type="radio" name="region" value="경기">경기
+                <label class="ai-option" onclick="selectOption(this, 'region')">
+                    <input type="radio" name="region" value="경기">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#127747;</span>
+                    <span><span class="opt-text">경기</span><br><span class="opt-desc">경기도, 인천 포함</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'region')">
-                    <input type="radio" name="region" value="부산">부산
+                <label class="ai-option" onclick="selectOption(this, 'region')">
+                    <input type="radio" name="region" value="부산">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#127754;</span>
+                    <span><span class="opt-text">부산</span><br><span class="opt-desc">부산광역시</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'region')">
-                    <input type="radio" name="region" value="대전">대전
+                <label class="ai-option" onclick="selectOption(this, 'region')">
+                    <input type="radio" name="region" value="대전">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#128300;</span>
+                    <span><span class="opt-text">대전</span><br><span class="opt-desc">대전, 대덕연구단지</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'region')">
-                    <input type="radio" name="region" value="기타">기타 지역
+                <label class="ai-option" onclick="selectOption(this, 'region')">
+                    <input type="radio" name="region" value="기타">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#127757;</span>
+                    <span><span class="opt-text">기타 지역</span><br><span class="opt-desc">그 외 광역시 및 도 지역</span></span>
                 </label>
             </div>
-            <div class="quiz-nav">
-                <button type="button" class="btn btn-outline" onclick="prevStep(3)">이전</button>
-                <button type="button" class="btn btn-primary" onclick="nextStep(5)">다음</button>
+            <div class="ai-nav">
+                <button type="button" class="nav-prev" onclick="prevStep(3)">&larr; 이전</button>
+                <button type="button" class="nav-next" onclick="nextStep(5)">다음 단계 &rarr;</button>
             </div>
         </div>
 
         <!-- Step 5: 관심 분야 -->
-        <div class="quiz-step" id="step5">
-            <h2>어떤 지원이 필요하세요?</h2>
-            <p>가장 관심있는 지원 유형을 선택해주세요.</p>
-            <div class="quiz-options">
-                <label class="quiz-option" onclick="selectOption(this, 'interests')">
-                    <input type="radio" name="interests" value="자금,사업화">사업화 자금 지원
+        <div class="ai-step-card" id="step5">
+            <div class="step-header">
+                <div class="step-tag">
+                    <span class="tag-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+                    STEP 5 / 5 &mdash; 최종 매칭 변수
+                </div>
+                <h2>어떤 지원이 필요하세요?</h2>
+                <p>마지막 단계입니다. AI가 최적 조합을 계산합니다.</p>
+            </div>
+            <div class="ai-options">
+                <label class="ai-option" onclick="selectOption(this, 'interests')">
+                    <input type="radio" name="interests" value="자금,사업화">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#128176;</span>
+                    <span><span class="opt-text">사업화 자금 지원</span><br><span class="opt-desc">보조금, 투자연계, 사업화</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'interests')">
-                    <input type="radio" name="interests" value="멘토링,컨설팅">멘토링 / 컨설팅
+                <label class="ai-option" onclick="selectOption(this, 'interests')">
+                    <input type="radio" name="interests" value="멘토링,컨설팅">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#129309;</span>
+                    <span><span class="opt-text">멘토링 / 컨설팅</span><br><span class="opt-desc">전문가 자문, 코칭 프로그램</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'interests')">
-                    <input type="radio" name="interests" value="교육,연수">교육 / 연수 프로그램
+                <label class="ai-option" onclick="selectOption(this, 'interests')">
+                    <input type="radio" name="interests" value="교육,연수">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#127891;</span>
+                    <span><span class="opt-text">교육 / 연수 프로그램</span><br><span class="opt-desc">창업교육, 해외연수, 아카데미</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'interests')">
-                    <input type="radio" name="interests" value="공간,인프라">사무공간 / 인프라
+                <label class="ai-option" onclick="selectOption(this, 'interests')">
+                    <input type="radio" name="interests" value="공간,인프라">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#128204;</span>
+                    <span><span class="opt-text">사무공간 / 인프라</span><br><span class="opt-desc">보육센터, 공유오피스, 장비</span></span>
                 </label>
-                <label class="quiz-option" onclick="selectOption(this, 'interests')">
-                    <input type="radio" name="interests" value="R&D,기술">R&D / 기술개발
+                <label class="ai-option" onclick="selectOption(this, 'interests')">
+                    <input type="radio" name="interests" value="R&D,기술">
+                    <span class="opt-radio"></span>
+                    <span class="opt-icon">&#128301;</span>
+                    <span><span class="opt-text">R&D / 기술개발</span><br><span class="opt-desc">기술개발, 특허, 시제품 제작</span></span>
                 </label>
             </div>
-            <div class="quiz-nav">
-                <button type="button" class="btn btn-outline" onclick="prevStep(4)">이전</button>
-                <button type="submit" class="btn btn-primary">결과 보기</button>
+            <div class="ai-nav">
+                <button type="button" class="nav-prev" onclick="prevStep(4)">&larr; 이전</button>
+                <button type="submit" class="nav-submit">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    AI 분석 시작
+                </button>
+            </div>
+            <div class="ai-analysis-hint">
+                <div class="analysis-dots"><span></span><span></span><span></span></div>
+                AI 엔진이 5가지 변수를 조합하여 최적 매칭을 수행합니다
             </div>
         </div>
     </form>
@@ -152,30 +724,50 @@
 {% block scripts %}
 <script>
 let currentStep = 1;
+const totalSteps = 5;
 
 function selectOption(el, name) {
-    el.closest('.quiz-options').querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+    el.closest('.ai-options').querySelectorAll('.ai-option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     el.querySelector('input').checked = true;
+}
+
+function updateProgress(step) {
+    // Fill line
+    const pct = ((step - 1) / (totalSteps - 1)) * 100;
+    document.getElementById('progFill').style.width = pct + '%';
+
+    // Update circles
+    for (let i = 1; i <= totalSteps; i++) {
+        const el = document.getElementById('prog' + i);
+        el.classList.remove('active', 'done');
+        if (i < step) el.classList.add('done');
+        else if (i === step) el.classList.add('active');
+    }
 }
 
 function nextStep(step) {
     document.getElementById('step' + currentStep).classList.remove('active');
     document.getElementById('step' + step).classList.add('active');
-    document.getElementById('prog' + currentStep).classList.remove('active');
-    document.getElementById('prog' + currentStep).classList.add('done');
-    document.getElementById('prog' + step).classList.add('active');
     currentStep = step;
+    updateProgress(step);
+    window.scrollTo({ top: document.querySelector('.ai-quiz-wrap').offsetTop - 20, behavior: 'smooth' });
 }
 
 function prevStep(step) {
     document.getElementById('step' + currentStep).classList.remove('active');
     document.getElementById('step' + step).classList.add('active');
-    document.getElementById('prog' + currentStep).classList.remove('active');
-    document.getElementById('prog' + step).classList.remove('done');
-    document.getElementById('prog' + step).classList.add('active');
     currentStep = step;
+    updateProgress(step);
+    window.scrollTo({ top: document.querySelector('.ai-quiz-wrap').offsetTop - 20, behavior: 'smooth' });
 }
+
+// Submit animation
+document.getElementById('quizForm').addEventListener('submit', function(e) {
+    const btn = this.querySelector('.nav-submit');
+    btn.innerHTML = '<div class="analysis-dots" style="display:flex;gap:3px;"><span style="width:4px;height:4px;border-radius:50%;background:#fff;animation:analysisPulse 1.4s ease infinite;"></span><span style="width:4px;height:4px;border-radius:50%;background:#fff;animation:analysisPulse 1.4s ease infinite 0.2s;"></span><span style="width:4px;height:4px;border-radius:50%;background:#fff;animation:analysisPulse 1.4s ease infinite 0.4s;"></span></div> AI 분석 중...';
+    btn.style.pointerEvents = 'none';
+});
 </script>
 {% endblock %}
 {% endblock %}

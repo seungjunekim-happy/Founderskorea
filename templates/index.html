@@ -1,26 +1,61 @@
 {% extends "base.html" %}
-{% block title %}Founderskorea - 창업자를 위한 블로그{% endblock %}
+{% block title %}Founderskorea - 창업자를 위한 미디어 플랫폼{% endblock %}
 
 {% block content %}
 <div class="container">
     <section class="hero">
         <h1>창업자를 위한 인사이트</h1>
-        <p>스타트업 트렌드, 전략, 그리고 성장을 위한 이야기를 나눕니다.</p>
+        <p>스타트업 트렌드, 정부지원사업, 투자, 실전 노하우까지. 한국 창업 생태계의 모든 것.</p>
     </section>
 
-    <section class="posts">
-        <div class="posts-header">최근 글</div>
-        {% for post in posts %}
-        <a href="/post/{{ post.id }}" class="post-card">
-            <div class="post-meta">
-                <span class="tag">{{ post.tag }}</span>
-                <span>{{ post.date }}</span>
-                <span>{{ post.author }}</span>
-            </div>
-            <h2>{{ post.title }}</h2>
-            <p>{{ post.summary }}</p>
-        </a>
-        {% endfor %}
+    <!-- Gov Support Widget -->
+    <section class="gov-widget">
+        <h3>나에게 맞는 정부지원사업 찾기</h3>
+        <p>5가지 질문에 답하면 AI가 맞춤 지원사업을 추천해드립니다.</p>
+        <a href="/onboarding" class="btn btn-primary">무료 매칭 시작하기</a>
+        <a href="/gov-support/db" class="btn btn-outline" style="margin-left: 0.5rem;">지원사업 검색</a>
     </section>
+
+    <!-- Category Previews -->
+    {% for cat in categories %}
+    {% set cat_posts = [] %}
+    {% for post in posts %}
+        {% if post.category and post.category.slug == cat.slug %}
+            {% if cat_posts|length < 3 %}
+                {% set _ = cat_posts.append(post) %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% if cat_posts|length > 0 %}
+    <section class="category-section">
+        <div class="section-header">
+            <h2>{{ cat.name }}</h2>
+            <a href="/{{ cat.slug }}">전체보기 &rarr;</a>
+        </div>
+        <div class="card-grid">
+            {% for post in cat_posts %}
+            <a href="/{{ cat.slug }}/{{ post.slug }}" class="post-card" data-cat="{{ cat.slug }}">
+                <div class="post-meta">
+                    <span class="badge badge-{{ cat.slug }}">{{ cat.name }}</span>
+                    {% if post.tag %}<span class="tag">{{ post.tag }}</span>{% endif %}
+                </div>
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.summary }}</p>
+                <div class="post-date">{{ post.created_at.strftime('%Y.%m.%d') }}</div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    {% endfor %}
+
+    {% if not posts %}
+    <section class="category-section">
+        <div class="section-header">
+            <h2>최근 글</h2>
+        </div>
+        <p class="text-secondary text-center mt-4 mb-4">아직 등록된 글이 없습니다.</p>
+    </section>
+    {% endif %}
 </div>
 {% endblock %}

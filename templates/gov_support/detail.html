@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}{{ program.title }} - 정부지원사업 - Founderskorea{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "GovernmentService",
+    "name": "{{ program.title }}",
+    "description": "{{ program.description[:200] }}",
+    "provider": {"@type": "GovernmentOrganization", "name": "{{ program.organization }}"}
+}
+</script>
+{% endblock %}
+
+{% block head_extra %}
+<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-narrow">
+    <div class="program-detail">
+        <a href="/gov-support/db" class="back" style="display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 2rem; font-weight: 500;">&larr; 지원사업 목록</a>
+
+        <h1>{{ program.title }}</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">{{ program.organization }}</p>
+
+        <div class="program-tags" style="margin-bottom: 2rem;">
+            <span class="badge badge-status">{{ program.status }}</span>
+            <span class="badge badge-type">{{ program.support_type }}</span>
+            <span class="badge badge-region">{{ program.region }}</span>
+            {% if program.funding_amount %}
+            <span class="badge" style="background: #f0fdf4; color: #16a34a;">{{ program.funding_amount }}</span>
+            {% endif %}
+        </div>
+
+        <div class="program-info-grid">
+            {% if program.business_stage %}
+            <div class="info-item">
+                <div class="label">사업 단계</div>
+                <div class="value">{{ program.business_stage }}</div>
+            </div>
+            {% endif %}
+            {% if program.business_size %}
+            <div class="info-item">
+                <div class="label">기업 규모</div>
+                <div class="value">{{ program.business_size }}</div>
+            </div>
+            {% endif %}
+            {% if program.industry %}
+            <div class="info-item">
+                <div class="label">업종</div>
+                <div class="value">{{ program.industry }}</div>
+            </div>
+            {% endif %}
+            {% if program.deadline %}
+            <div class="info-item">
+                <div class="label">신청 마감일</div>
+                <div class="value">{{ program.deadline.strftime('%Y.%m.%d') }}</div>
+            </div>
+            {% endif %}
+            {% if program.funding_amount %}
+            <div class="info-item">
+                <div class="label">지원금액</div>
+                <div class="value">{{ program.funding_amount }}</div>
+            </div>
+            {% endif %}
+            {% if program.url %}
+            <div class="info-item">
+                <div class="label">공식 링크</div>
+                <div class="value"><a href="{{ program.url }}" target="_blank" rel="noopener">공식 페이지 바로가기</a></div>
+            </div>
+            {% endif %}
+        </div>
+
+        <h2 style="font-size: 1.2rem; font-weight: 700; margin: 2rem 0 1rem;">사업 설명</h2>
+        <div class="post-content">
+            <p>{{ program.description }}</p>
+        </div>
+
+        {% if program.application_kit %}
+        <h2 style="font-size: 1.2rem; font-weight: 700; margin: 2rem 0 1rem;">신청 키트</h2>
+        {% if program.application_kit.checklist_html %}
+        <div class="kit-checklist">
+            <h3>체크리스트</h3>
+            {{ program.application_kit.checklist_html | safe }}
+        </div>
+        {% endif %}
+        {% if program.application_kit.guide_html %}
+        <div class="post-content">
+            {{ program.application_kit.guide_html | safe }}
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <h2 style="font-size: 1.2rem; font-weight: 700; margin: 2rem 0 1rem;">커뮤니티 리뷰</h2>
+        <div id="reviewSection">
+            {% include "gov_support/_reviews.html" %}
+        </div>
+
+        <div class="review-form">
+            <h3>리뷰 남기기</h3>
+            <form hx-post="/gov-support/db/{{ program.id }}/review" hx-target="#reviewSection" hx-swap="innerHTML">
+                <div class="form-group">
+                    <label>닉네임</label>
+                    <input type="text" name="nickname" placeholder="익명" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label>별점</label>
+                    <div class="star-rating">
+                        <input type="radio" name="rating" value="5" id="star5"><label for="star5">&#9733;</label>
+                        <input type="radio" name="rating" value="4" id="star4"><label for="star4">&#9733;</label>
+                        <input type="radio" name="rating" value="3" id="star3" checked><label for="star3">&#9733;</label>
+                        <input type="radio" name="rating" value="2" id="star2"><label for="star2">&#9733;</label>
+                        <input type="radio" name="rating" value="1" id="star1"><label for="star1">&#9733;</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>결과</label>
+                    <select name="success_tag">
+                        <option value="">선택안함</option>
+                        <option value="선정됨">선정됨</option>
+                        <option value="탈락">탈락</option>
+                        <option value="진행중">진행중</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>리뷰 내용</label>
+                    <textarea name="content" placeholder="이 사업에 대한 경험을 공유해주세요..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>꿀팁 (선택)</label>
+                    <textarea name="tip" placeholder="신청 시 도움되는 팁이 있다면 공유해주세요..." style="min-height: 60px;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">리뷰 등록</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% if program.reviews %}
+{% for review in program.reviews|sort(attribute='created_at', reverse=True) %}
+<div class="review-card">
+    <div class="review-header">
+        <span class="nickname">{{ review.nickname }}</span>
+        <div>
+            <span class="stars">{% for i in range(review.rating) %}&#9733;{% endfor %}{% for i in range(5 - review.rating) %}&#9734;{% endfor %}</span>
+            {% if review.success_tag %}
+            <span class="badge" style="margin-left: 0.5rem; background: {% if review.success_tag == '선정됨' %}#ecfdf5{% elif review.success_tag == '탈락' %}#fef2f2{% else %}#eff6ff{% endif %}; color: {% if review.success_tag == '선정됨' %}#059669{% elif review.success_tag == '탈락' %}#dc2626{% else %}#2563eb{% endif %};">{{ review.success_tag }}</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="review-content">{{ review.content }}</div>
+    {% if review.tip %}
+    <div class="review-tip">{{ review.tip }}</div>
+    {% endif %}
+</div>
+{% endfor %}
+{% else %}
+<p class="text-secondary" style="font-size: 0.9rem;">아직 리뷰가 없습니다. 첫 번째 리뷰를 남겨주세요!</p>
+{% endif %}

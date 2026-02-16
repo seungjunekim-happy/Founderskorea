@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}매칭 결과 - Founderskorea{% endblock %}
+
+{% block content %}
+<div class="container-narrow">
+    <section style="padding: 3rem 0 2rem; text-align: center;">
+        <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;">맞춤 지원사업 추천 결과</h1>
+        <p style="color: var(--text-secondary);">
+            {{ profile.industry or '전체' }} · {{ profile.business_stage or '전체' }} · {{ profile.region or '전국' }} 기반 추천
+        </p>
+    </section>
+
+    {% if matches %}
+    {% for match in matches %}
+    {% if match.score >= 30 %}
+    <a href="/gov-support/db/{{ match.program.id }}" class="match-card">
+        <div class="match-score {% if match.score >= 70 %}high{% elif match.score >= 50 %}medium{% else %}low{% endif %}">
+            {{ match.score }}%
+        </div>
+        <div class="match-info">
+            <h3>{{ match.program.title }}</h3>
+            <p>{{ match.program.organization }} · {{ match.program.support_type }} · {{ match.program.region }}</p>
+            {% if match.program.funding_amount %}
+            <p style="color: var(--cat-gov); font-weight: 600; margin-top: 0.25rem;">{{ match.program.funding_amount }}</p>
+            {% endif %}
+        </div>
+    </a>
+    {% endif %}
+    {% endfor %}
+    {% else %}
+    <p class="text-secondary text-center mt-4 mb-4">조건에 맞는 지원사업이 없습니다.</p>
+    {% endif %}
+
+    <div class="text-center mt-4 mb-4">
+        <a href="/onboarding" class="btn btn-outline">다시 매칭하기</a>
+        <a href="/gov-support/db" class="btn btn-primary" style="margin-left: 0.5rem;">전체 지원사업 보기</a>
+    </div>
+</div>
+{% endblock %}

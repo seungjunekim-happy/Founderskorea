@@ -1,0 +1,32 @@
+{% if programs %}
+{% for program in programs %}
+<a href="/gov-support/db/{{ program.id }}" class="program-card">
+    <h3>{{ program.title }}</h3>
+    <div class="org">{{ program.organization }}</div>
+    <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+        {{ program.description[:120] }}{% if program.description|length > 120 %}...{% endif %}
+    </p>
+    <div class="program-tags">
+        <span class="badge badge-status">{{ program.status }}</span>
+        <span class="badge badge-type">{{ program.support_type }}</span>
+        <span class="badge badge-region">{{ program.region }}</span>
+        {% if program.funding_amount %}
+        <span class="badge" style="background: #f0fdf4; color: #16a34a;">{{ program.funding_amount }}</span>
+        {% endif %}
+        {{ deadline_badge(program.deadline) | safe }}
+    </div>
+</a>
+{% endfor %}
+
+<div class="pagination">
+    {% if has_prev %}
+    <a href="/gov-support/db?q={{ q }}&region={{ region }}&support_type={{ support_type }}&status={{ status }}&page={{ page - 1 }}">&laquo; 이전</a>
+    {% endif %}
+    <span class="current">{{ page }}</span>
+    {% if has_next %}
+    <a href="/gov-support/db?q={{ q }}&region={{ region }}&support_type={{ support_type }}&status={{ status }}&page={{ page + 1 }}">다음 &raquo;</a>
+    {% endif %}
+</div>
+{% else %}
+<p class="text-secondary text-center mt-4 mb-4">조건에 맞는 지원사업이 없습니다.</p>
+{% endif %}

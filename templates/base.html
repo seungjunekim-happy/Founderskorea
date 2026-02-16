@@ -4,16 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Founderskorea{% endblock %}</title>
+    <meta name="description" content="{% block description %}한국 창업자를 위한 미디어 플랫폼 - 스타트업 뉴스, 정부지원사업, 투자, 실전노하우, 네트워킹{% endblock %}">
+    {% block og_meta %}
+    <meta property="og:title" content="{% block og_title %}Founderskorea{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}한국 창업자를 위한 미디어 플랫폼{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ko_KR">
+    <meta name="twitter:card" content="summary_large_image">
+    {% endblock %}
+    {% block json_ld %}{% endblock %}
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="alternate" type="application/rss+xml" title="Founderskorea RSS" href="/feed.xml">
+    {% block head_extra %}{% endblock %}
 </head>
 <body>
     <header>
-        <div class="container">
+        <div class="header-inner">
             <a href="/" class="logo">founders<span>korea</span></a>
-            <nav>
-                <a href="/">블로그</a>
+            <nav class="desktop-nav">
+                {% if categories is defined %}
+                {% for cat in categories %}
+                <a href="/{{ cat.slug }}" data-cat="{{ cat.slug }}"
+                   {% if active_category is defined and active_category == cat.slug %}class="active"{% endif %}>{{ cat.name }}</a>
+                {% endfor %}
+                {% endif %}
+                <a href="/gov-support/db">지원사업 DB</a>
+                <a href="/onboarding">AI 매칭</a>
                 <a href="/about">소개</a>
             </nav>
+            <button class="hamburger" onclick="toggleMobileNav()" aria-label="메뉴">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+        <div class="mobile-nav" id="mobileNav">
+            {% if categories is defined %}
+            {% for cat in categories %}
+            <a href="/{{ cat.slug }}">{{ cat.name }}</a>
+            {% endfor %}
+            {% endif %}
+            <a href="/gov-support/db">지원사업 DB</a>
+            <a href="/onboarding">AI 매칭</a>
+            <a href="/about">소개</a>
         </div>
     </header>
 
@@ -22,9 +53,47 @@
     </main>
 
     <footer>
-        <div class="container">
-            &copy; {{ year }} Founderskorea. All rights reserved.
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="logo">founders<span>korea</span></a>
+                    <p>한국 창업자를 위한 미디어 플랫폼.<br>스타트업 생태계의 성장을 함께 만들어갑니다.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>카테고리</h4>
+                    {% if categories is defined %}
+                    {% for cat in categories %}
+                    <a href="/{{ cat.slug }}">{{ cat.name }}</a>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="footer-col">
+                    <h4>서비스</h4>
+                    <a href="/gov-support/db">정부지원사업 DB</a>
+                    <a href="/onboarding">AI 매칭</a>
+                    <a href="/feed.xml">RSS 피드</a>
+                </div>
+                <div class="footer-col">
+                    <h4>안내</h4>
+                    <a href="/about">소개</a>
+                    <a href="/sitemap.xml">사이트맵</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; {{ year }} Founderskorea. All rights reserved.
+            </div>
         </div>
     </footer>
+
+    <script>
+    function toggleMobileNav() {
+        const nav = document.getElementById('mobileNav');
+        const btn = document.querySelector('.hamburger');
+        nav.classList.toggle('open');
+        btn.classList.toggle('active');
+        document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+    }
+    </script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

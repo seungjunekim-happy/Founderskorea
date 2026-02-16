@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }} - Founderskorea{% endblock %}
+{% block description %}{{ post.summary or '' }}{% endblock %}
+
+{% block og_meta %}
+<meta property="og:title" content="{{ post.title }}">
+<meta property="og:description" content="{{ post.summary or '' }}">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{ post.title }}",
+    "description": "{{ post.summary or '' }}",
+    "author": {"@type": "Person", "name": "{{ post.author }}"},
+    "datePublished": "{{ post.created_at.strftime('%Y-%m-%d') }}",
+    "dateModified": "{{ post.updated_at.strftime('%Y-%m-%d') }}",
+    "publisher": {"@type": "Organization", "name": "Founderskorea"}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container-narrow">
+    <article class="post-detail">
+        <a href="/{{ category.slug }}" class="back">&larr; {{ category.name }} 목록</a>
+        <h1>{{ post.title }}</h1>
+        <div class="meta">
+            <span class="badge badge-{{ category.slug }}">{{ category.name }}</span>
+            {% if post.tag %}<span class="tag">{{ post.tag }}</span>{% endif %}
+            <span>{{ post.created_at.strftime('%Y.%m.%d') }}</span>
+            <span>{{ post.author }}</span>
+        </div>
+        <div class="post-content">
+            {{ post.content_html | safe }}
+        </div>
+    </article>
+</div>
+{% endblock %}

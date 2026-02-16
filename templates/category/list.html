@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name }} - Founderskorea{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="hero" style="padding: 3rem 0 2rem;">
+        <h1>{{ category.name }}</h1>
+        <p>{{ category.description }}</p>
+    </section>
+
+    {% if posts %}
+    <div class="card-grid">
+        {% for post in posts %}
+        <a href="/{{ category.slug }}/{{ post.slug }}" class="post-card" data-cat="{{ category.slug }}">
+            <div class="post-meta">
+                <span class="badge badge-{{ category.slug }}">{{ category.name }}</span>
+                {% if post.tag %}<span class="tag">{{ post.tag }}</span>{% endif %}
+            </div>
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.summary }}</p>
+            <div class="post-date">{{ post.created_at.strftime('%Y.%m.%d') }}</div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="pagination">
+        {% if has_prev %}
+        <a href="/{{ category.slug }}?page={{ page - 1 }}">&laquo; 이전</a>
+        {% endif %}
+        <span class="current">{{ page }}</span>
+        {% if has_next %}
+        <a href="/{{ category.slug }}?page={{ page + 1 }}">다음 &raquo;</a>
+        {% endif %}
+    </div>
+    {% else %}
+    <p class="text-secondary text-center mt-4 mb-4">아직 등록된 글이 없습니다.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -41,7 +41,7 @@ async def category_list(request: Request, category_slug: str, page: int = 1, db:
     offset = (page - 1) * per_page
     posts_q = (await db.execute(
         select(Post)
-        .where(Post.category_id == category.id, Post.is_published == True)
+        .where(Post.category_id == category.id, Post.status == "published")
         .order_by(Post.created_at.desc())
         .offset(offset)
         .limit(per_page + 1)
@@ -69,7 +69,7 @@ async def post_detail(request: Request, category_slug: str, post_slug: str, db: 
     post = (await db.execute(
         select(Post)
         .options(selectinload(Post.category))
-        .where(Post.slug == post_slug, Post.is_published == True)
+        .where(Post.slug == post_slug, Post.status == "published")
     )).scalar_one_or_none()
 
     if not post or not post.category or post.category.slug != category_slug:

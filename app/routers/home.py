@@ -23,7 +23,7 @@ async def home(request: Request, db: AsyncSession = Depends(get_db)):
     # All published posts for category grouping
     all_posts = (await db.execute(
         select(Post)
-        .where(Post.is_published == True)
+        .where(Post.status == "published")
         .options(selectinload(Post.category))
         .order_by(Post.created_at.desc())
     )).scalars().all()

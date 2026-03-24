@@ -1359,6 +1359,8 @@ async def seed_initial_data(session: AsyncSession):
             content_html=render_markdown(post_data["content_md"]),
             author=post_data["author"],
             tag=post_data["tag"],
+            status="published",
+            source="seed",
             category_id=cat.id,
             created_at=datetime.fromisoformat(date_str).replace(tzinfo=timezone.utc),
             updated_at=datetime.fromisoformat(date_str).replace(tzinfo=timezone.utc),

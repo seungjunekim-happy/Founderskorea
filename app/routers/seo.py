@@ -16,7 +16,7 @@ async def sitemap(db: AsyncSession = Depends(get_db)):
     base = settings.BASE_URL
     categories = (await db.execute(select(Category).order_by(Category.sort_order))).scalars().all()
     posts = (await db.execute(
-        select(Post).where(Post.is_published == True).order_by(Post.created_at.desc())
+        select(Post).where(Post.status == "published").order_by(Post.created_at.desc())
     )).scalars().all()
 
     urls = [f'  <url><loc>{base}/</loc><priority>1.0</priority></url>']

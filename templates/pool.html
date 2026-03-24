@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% block title %}기사 풀 (Article Pool) - Founderskorea{% endblock %}
+{% block description %}Founderskorea 등록 기사 전체 목록 — 상태·카테고리·출처별 필터링{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <!-- ── Page Header ── -->
+    <div class="pool-header">
+        <div class="pool-header-text">
+            <h1>기사 풀 <span class="pool-header-sub">Article Pool</span></h1>
+            <p>등록된 모든 기사를 관리하고 각 섹션에 배치할 수 있습니다.</p>
+        </div>
+        <div class="pool-header-total">
+            전체 <strong>{{ stats_total }}</strong>건
+        </div>
+    </div>
+
+    <!-- ── Stats Row ── -->
+    <div class="pool-stats">
+        <div class="pool-stat-card">
+            <div class="pool-stat-value">{{ stats_total }}</div>
+            <div class="pool-stat-label">전체 기사</div>
+        </div>
+        <div class="pool-stat-card pool-stat-card--published">
+            <div class="pool-stat-value">{{ stats_published }}</div>
+            <div class="pool-stat-label">게시됨</div>
+        </div>
+        <div class="pool-stat-card pool-stat-card--draft">
+            <div class="pool-stat-value">{{ stats_draft }}</div>
+            <div class="pool-stat-label">초안</div>
+        </div>
+        <div class="pool-stat-card pool-stat-card--unassigned">
+            <div class="pool-stat-value">{{ stats_unassigned }}</div>
+            <div class="pool-stat-label">미배정</div>
+        </div>
+    </div>
+
+    <!-- ── Filter Bar ── -->
+    <form class="pool-filters" action="/pool" method="get">
+        <div class="pool-filter-row">
+            <div class="pool-filter-group">
+                <label class="pool-filter-label" for="filter-status">상태</label>
+                <select id="filter-status" name="status" class="pool-filter-select">
+                    <option value="" {% if current_status == "" %}selected{% endif %}>전체</option>
+                    <option value="draft" {% if current_status == "draft" %}selected{% endif %}>초안</option>
+                    <option value="review" {% if current_status == "review" %}selected{% endif %}>검토</option>
+                    <option value="published" {% if current_status == "published" %}selected{% endif %}>게시됨</option>
+                    <option value="archived" {% if current_status == "archived" %}selected{% endif %}>보관</option>
+                </select>
+            </div>
+
+            <div class="pool-filter-group">
+                <label class="pool-filter-label" for="filter-category">카테고리</label>
+                <select id="filter-category" name="category_slug" class="pool-filter-select">
+                    <option value="" {% if current_category == "" %}selected{% endif %}>전체</option>
+                    <option value="__unassigned__" {% if current_category == "__unassigned__" %}selected{% endif %}>미배정</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.slug }}" {% if current_category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="pool-filter-group">
+                <label class="pool-filter-label" for="filter-source">출처</label>
+                <select id="filter-source" name="source" class="pool-filter-select">
+                    <option value="" {% if current_source == "" %}selected{% endif %}>전체</option>
+                    <option value="api" {% if current_source == "api" %}selected{% endif %}>API</option>
+                    <option value="seed" {% if current_source == "seed" %}selected{% endif %}>시드</option>
+                    <option value="editor" {% if current_source == "editor" %}selected{% endif %}>편집자</option>
+                    <option value="manual" {% if current_source == "manual" %}selected{% endif %}>수동</option>
+                </select>
+            </div>
+
+            <div class="pool-filter-group pool-filter-group--search">
+                <label class="pool-filter-label" for="filter-q">제목 검색</label>
+                <input
+                    id="filter-q"
+                    type="text"
+                    name="q"
+                    value="{{ current_q }}"
+                    placeholder="키워드 입력..."
+                    class="pool-filter-input"
+                >
+            </div>
+
+            <div class="pool-filter-actions">
+                <button type="submit" class="btn btn-primary pool-filter-btn">검색</button>
+                <a href="/pool" class="btn pool-filter-reset">초기화</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- ── Result Summary ── -->
+    <div class="pool-result-summary">
+        {% if current_status or current_category or current_source or current_q %}
+        <span>필터 결과: <strong>{{ total }}</strong>건</span>
+        <span class="pool-result-filters">
+            {% if current_status %}<span class="pool-active-filter">상태: {{ current_status }}</span>{% endif %}
+            {% if current_category %}<span class="pool-active-filter">카테고리: {{ current_category }}</span>{% endif %}
+            {% if current_source %}<span class="pool-active-filter">출처: {{ current_source }}</span>{% endif %}
+            {% if current_q %}<span class="pool-active-filter">검색어: {{ current_q }}</span>{% endif %}
+        </span>
+        {% else %}
+        <span>전체 <strong>{{ total }}</strong>건 표시 중 (페이지 {{ page }}/{{ total_pages if total_pages > 0 else 1 }})</span>
+        {% endif %}
+    </div>
+
+    <!-- ── Article Table (Desktop) ── -->
+    {% if posts %}
+    <div class="pool-table-wrap">
+        <table class="pool-table">
+            <thead>
+                <tr>
+                    <th class="pool-th pool-th--title">제목</th>
+                    <th class="pool-th pool-th--status">상태</th>
+                    <th class="pool-th pool-th--category">카테고리</th>
+                    <th class="pool-th pool-th--source">출처</th>
+                    <th class="pool-th pool-th--author">작성자</th>
+                    <th class="pool-th pool-th--date">등록일</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr class="pool-tr">
+                    <td class="pool-td pool-td--title">
+                        {% if post.category %}
+                        <a href="/{{ post.category.slug }}/{{ post.slug }}" class="pool-title-link">{{ post.title }}</a>
+                        {% else %}
+                        <span class="pool-title-link pool-title-nolink">{{ post.title }}</span>
+                        {% endif %}
+                        {% if post.summary %}
+                        <div class="pool-summary">{{ post.summary | truncate(80) }}</div>
+                        {% endif %}
+                    </td>
+                    <td class="pool-td pool-td--status">
+                        <span class="badge badge-{{ post.status }}">
+                            {% if post.status == "draft" %}초안
+                            {% elif post.status == "review" %}검토
+                            {% elif post.status == "published" %}게시됨
+                            {% elif post.status == "archived" %}보관
+                            {% else %}{{ post.status }}{% endif %}
+                        </span>
+                    </td>
+                    <td class="pool-td pool-td--category">
+                        {% if post.category %}
+                        <span class="category-dot category-dot--{{ post.category.slug }}"></span>
+                        <span class="pool-cat-name">{{ post.category.name }}</span>
+                        {% else %}
+                        <span class="pool-unassigned">미배정</span>
+                        {% endif %}
+                    </td>
+                    <td class="pool-td pool-td--source">
+                        {% if post.source %}
+                        <span class="pool-source">{{ post.source }}</span>
+                        {% else %}
+                        <span class="pool-source pool-source--none">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="pool-td pool-td--author">
+                        {% if post.author %}{{ post.author }}{% else %}<span class="pool-source--none">—</span>{% endif %}
+                    </td>
+                    <td class="pool-td pool-td--date">
+                        {{ post.created_at.strftime('%Y.%m.%d') }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ── Article Cards (Mobile) ── -->
+    <div class="pool-cards">
+        {% for post in posts %}
+        <div class="pool-card">
+            <div class="pool-card-top">
+                <span class="badge badge-{{ post.status }}">
+                    {% if post.status == "draft" %}초안
+                    {% elif post.status == "review" %}검토
+                    {% elif post.status == "published" %}게시됨
+                    {% elif post.status == "archived" %}보관
+                    {% else %}{{ post.status }}{% endif %}
+                </span>
+                <span class="pool-card-date">{{ post.created_at.strftime('%Y.%m.%d') }}</span>
+            </div>
+            <div class="pool-card-title">
+                {% if post.category %}
+                <a href="/{{ post.category.slug }}/{{ post.slug }}">{{ post.title }}</a>
+                {% else %}
+                {{ post.title }}
+                {% endif %}
+            </div>
+            <div class="pool-card-meta">
+                <span class="pool-card-meta-item">
+                    {% if post.category %}
+                    <span class="category-dot category-dot--{{ post.category.slug }}"></span>{{ post.category.name }}
+                    {% else %}
+                    <span class="pool-unassigned">미배정</span>
+                    {% endif %}
+                </span>
+                {% if post.source %}
+                <span class="pool-card-meta-item pool-source">{{ post.source }}</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ── Pagination ── -->
+    {% if total_pages > 1 %}
+    <nav class="pool-pagination" aria-label="페이지 탐색">
+        {% set base_params = [] %}
+        {% if current_status %}{% set _ = base_params.append('status=' ~ current_status) %}{% endif %}
+        {% if current_category %}{% set _ = base_params.append('category_slug=' ~ current_category) %}{% endif %}
+        {% if current_source %}{% set _ = base_params.append('source=' ~ current_source) %}{% endif %}
+        {% if current_q %}{% set _ = base_params.append('q=' ~ current_q) %}{% endif %}
+        {% set base_qs = base_params | join('&') %}
+
+        {% if has_prev %}
+        <a class="pool-page-btn" href="/pool?{{ base_qs }}{% if base_qs %}&{% endif %}page={{ page - 1 }}">&laquo; 이전</a>
+        {% else %}
+        <span class="pool-page-btn pool-page-btn--disabled">&laquo; 이전</span>
+        {% endif %}
+
+        <div class="pool-page-numbers">
+            {% set start_page = [page - 2, 1] | max %}
+            {% set end_page = [page + 2, total_pages] | min %}
+            {% for p in range(start_page, end_page + 1) %}
+            <a class="pool-page-num {% if p == page %}pool-page-num--active{% endif %}"
+               href="/pool?{{ base_qs }}{% if base_qs %}&{% endif %}page={{ p }}">{{ p }}</a>
+            {% endfor %}
+        </div>
+
+        {% if has_next %}
+        <a class="pool-page-btn" href="/pool?{{ base_qs }}{% if base_qs %}&{% endif %}page={{ page + 1 }}">다음 &raquo;</a>
+        {% else %}
+        <span class="pool-page-btn pool-page-btn--disabled">다음 &raquo;</span>
+        {% endif %}
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="pool-empty">
+        <div class="pool-empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+        </div>
+        <p>해당 조건에 맞는 기사가 없습니다.</p>
+        <a href="/pool" class="btn btn-secondary">필터 초기화</a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

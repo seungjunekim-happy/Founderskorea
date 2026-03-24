@@ -42,7 +42,7 @@ def _build_rss(title: str, link: str, description: str, posts: list) -> str:
 async def rss_feed(db: AsyncSession = Depends(get_db)):
     posts = (await db.execute(
         select(Post)
-        .where(Post.is_published == True)
+        .where(Post.status == "published")
         .options(selectinload(Post.category))
         .order_by(Post.created_at.desc())
         .limit(20)
@@ -68,7 +68,7 @@ async def category_rss(category_slug: str, db: AsyncSession = Depends(get_db)):
 
     posts = (await db.execute(
         select(Post)
-        .where(Post.is_published == True, Post.category_id == category.id)
+        .where(Post.status == "published", Post.category_id == category.id)
         .options(selectinload(Post.category))
         .order_by(Post.created_at.desc())
         .limit(20)

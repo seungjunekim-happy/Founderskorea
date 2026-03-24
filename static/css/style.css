@@ -2406,3 +2406,1202 @@ footer {
     from { background-position: 200% 0; }
     to { background-position: -200% 0; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   CYCLE 1 HOMEPAGE REDESIGN
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── 1. Homepage Hero ─── */
+.homepage-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 40%, var(--secondary-dark) 100%);
+    padding: 5rem 0 4rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.homepage-hero .hero-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.homepage-hero .hero-badge {
+    display: inline-block;
+    background: rgba(212, 168, 83, 0.2);
+    color: var(--accent);
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(212, 168, 83, 0.3);
+}
+
+.homepage-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1.3;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.homepage-hero p {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.hero-stat strong {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--accent);
+}
+
+.hero-stat span {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.homepage-hero .hero-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0;
+}
+
+.homepage-hero .btn-accent {
+    font-size: 1rem;
+    padding: 0.85rem 2rem;
+}
+
+.homepage-hero .btn-outline-light {
+    font-size: 1rem;
+    padding: 0.85rem 2rem;
+}
+
+/* Hero decoration - abstract dots/circles */
+.hero-decoration {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    opacity: 0.3;
+}
+
+.hero-decoration::before,
+.hero-decoration::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(212, 168, 83, 0.4);
+}
+
+.hero-decoration::before {
+    width: 200px;
+    height: 200px;
+    top: 20px;
+    right: 20px;
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.hero-decoration::after {
+    width: 120px;
+    height: 120px;
+    bottom: 40px;
+    left: 40px;
+    border-color: rgba(255, 255, 255, 0.2);
+    animation: pulse 3s ease-in-out infinite 1s;
+}
+
+/* ─── 2. Featured Section ─── */
+.section-featured {
+    padding: 3rem 0;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.5rem;
+}
+
+.featured-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    min-height: 280px;
+}
+
+.featured-main:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    color: var(--text);
+}
+
+.featured-main h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0.75rem 0 0.5rem;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+}
+
+.featured-main p {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+.featured-main .card-meta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    font-size: 0.82rem;
+    color: var(--text-tertiary);
+}
+
+.featured-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.featured-item {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text);
+    transition: background 0.15s ease;
+}
+
+.featured-item:last-child { border-bottom: none; }
+.featured-item:hover { background: var(--surface-hover); color: var(--text); }
+
+.featured-item h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0.4rem 0 0.25rem;
+    line-height: 1.45;
+}
+
+.featured-item .card-date {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+}
+
+/* ─── 3. Category Sections ─── */
+.section-category {
+    padding: 2.5rem 0;
+}
+
+.section-category .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.section-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 1.25rem 2rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+}
+
+.section-cta p {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin: 0;
+}
+
+/* ─── 4. Split Section ─── */
+.section-split {
+    padding: 2.5rem 0;
+}
+
+.split-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+}
+
+.headline-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text);
+    transition: color 0.15s;
+}
+
+.headline-card:hover { color: var(--secondary); }
+
+.headline-card .hl-num {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--accent);
+    min-width: 1.5rem;
+    line-height: 1.3;
+}
+
+.headline-card h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 0.2rem;
+}
+
+.headline-card .card-date {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+}
+
+/* ─── 5. Bottom Modules ─── */
+.bottom-modules {
+    padding: 3rem 0;
+    background: var(--bg-secondary);
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+}
+
+.module-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+}
+
+.module-card.module-gov {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.module-card.module-gov h3 {
+    color: #fff;
+}
+
+.module-card.module-gov p {
+    color: rgba(255,255,255,0.8);
+}
+
+/* ─── 5b. Section Info (Newsletter + Events + Gov DB) ─── */
+.section-info {
+    padding: 3rem 0;
+    background: var(--bg-secondary);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.info-newsletter,
+.info-events {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+}
+
+.info-newsletter h3,
+.info-events h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+}
+
+.info-newsletter p,
+.info-events p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.info-gov-db {
+    background: var(--primary);
+    border-radius: var(--radius);
+    padding: 2rem;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.info-gov-db h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.info-gov-db p {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+}
+
+.info-gov-db .btn {
+    width: 100%;
+    justify-content: center;
+}
+
+@media (max-width: 1024px) {
+    .info-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── 6. Bottom CTA ─── */
+.bottom-cta {
+    background: var(--primary);
+    padding: 4rem 0;
+    text-align: center;
+    color: #fff;
+}
+
+.bottom-cta h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.75rem;
+}
+
+.bottom-cta p {
+    color: rgba(255,255,255,0.8);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ─── 7. Nav CTA Button & Priority ─── */
+.nav-cta {
+    margin-left: 0.5rem;
+}
+
+nav.desktop-nav a.nav-priority {
+    color: var(--secondary);
+    font-weight: 700;
+}
+
+nav.desktop-nav a.nav-priority:hover,
+nav.desktop-nav a.nav-priority.active {
+    color: var(--secondary-dark);
+    border-bottom-color: var(--secondary);
+}
+
+/* ─── 8. Responsive overrides for Cycle 1 homepage ─── */
+@media (max-width: 1024px) {
+    .homepage-hero .hero-grid { grid-template-columns: 1fr; }
+    .hero-decoration { display: none; }
+    .featured-grid { grid-template-columns: 1fr; }
+    .split-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .modules-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .homepage-hero { padding: 3rem 0 2.5rem; }
+    .homepage-hero h1 { font-size: 1.75rem; }
+    .hero-stats { gap: 1.5rem; }
+    .hero-stat strong { font-size: 1.25rem; }
+    .section-category .card-grid { grid-template-columns: 1fr; }
+    .section-cta { flex-direction: column; text-align: center; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CYCLE 2 IMPROVEMENTS
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Quick Search Widget ─── */
+.quick-search {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 0;
+    margin-top: -1px;
+}
+
+.quick-search-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.quick-search-inner h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1rem;
+}
+
+.quick-search-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.quick-search-form .search-input {
+    flex: 1;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.2s;
+}
+
+.quick-search-form .search-input:focus {
+    border-color: var(--secondary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(13, 115, 119, 0.1);
+}
+
+.quick-search-tags {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.quick-search-tags a {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.15s ease;
+}
+
+.quick-search-tags a:hover {
+    background: var(--secondary);
+    color: #fff;
+    border-color: var(--secondary);
+}
+
+/* ─── Trust Partners ─── */
+.trust-partners {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.trust-label {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+}
+
+.trust-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.trust-logo {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.trust-logo:hover {
+    opacity: 1;
+}
+
+/* ─── Inline Testimonial ─── */
+.testimonial-inline {
+    text-align: center;
+    flex: 1;
+}
+
+.testimonial-inline p {
+    font-size: 0.92rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 0.25rem;
+}
+
+.testimonial-inline span {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    font-weight: 500;
+}
+
+.section-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+    padding: 1.5rem 2rem;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-light);
+}
+
+/* ─── Bottom CTA Stats ─── */
+.bottom-cta-stats {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ─── Cycle 2 Responsive ─── */
+@media (max-width: 768px) {
+    .quick-search-form {
+        flex-direction: column;
+    }
+
+    .quick-search-form .btn {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .trust-logos {
+        gap: 1.25rem;
+    }
+
+    .trust-logo {
+        font-size: 0.75rem;
+    }
+
+    .section-cta {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .bottom-cta-stats {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* Larger touch targets for mobile CTAs */
+    .homepage-hero .btn-lg,
+    .bottom-cta .btn-lg {
+        padding: 1rem 2rem;
+        font-size: 1.05rem;
+        min-height: 48px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CYCLE 3 — UNIQUE SECTION LAYOUTS
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── A. 정부지원 레이더 — Dashboard Grid ─── */
+.section-radar {
+    padding: 3rem 0;
+    background: var(--bg-secondary);
+}
+
+.radar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.radar-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 160px;
+    transition: all 0.2s ease;
+    color: var(--text);
+}
+
+.radar-card:hover {
+    border-color: var(--secondary);
+    box-shadow: 0 4px 16px rgba(13, 115, 119, 0.12);
+    transform: translateY(-2px);
+    color: var(--text);
+}
+
+.radar-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.radar-agency {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    font-weight: 600;
+}
+
+.radar-dday {
+    background: var(--accent);
+    color: var(--primary-dark);
+    font-weight: 800;
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+}
+
+.radar-card h3 {
+    font-size: 0.98rem;
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 0.4rem;
+    flex-grow: 1;
+}
+
+.radar-card p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+}
+
+.radar-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.radar-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.radar-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.radar-status-open { color: var(--status-success); }
+.radar-status-open::before { background: var(--status-success); }
+.radar-status-closing { color: var(--status-warn); }
+.radar-status-closing::before { background: var(--status-warn); }
+.radar-status-closed { color: var(--text-tertiary); }
+.radar-status-closed::before { background: var(--text-tertiary); }
+
+.radar-date {
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+}
+
+/* ─── B. 성장 플레이북 — Toolkit Horizontal Strip ─── */
+.section-playbook {
+    padding: 3rem 0;
+}
+
+.playbook-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.playbook-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--secondary);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease;
+    color: var(--text);
+}
+
+.playbook-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    color: var(--text);
+}
+
+.playbook-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    line-height: 1;
+}
+
+.playbook-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+}
+
+.playbook-type {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--secondary);
+    text-transform: uppercase;
+}
+
+.playbook-level {
+    font-size: 0.68rem;
+    color: var(--text-tertiary);
+    background: var(--bg-secondary);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+}
+
+.playbook-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 0.4rem;
+}
+
+.playbook-card p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* ─── C. 최신 콘텐츠 — Editorial Featured ─── */
+.section-editorial {
+    padding: 3rem 0;
+    background: var(--bg-secondary);
+}
+
+.editorial-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 1.5rem;
+}
+
+.editorial-main {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 320px;
+    color: var(--text);
+    transition: all 0.2s ease;
+}
+
+.editorial-main:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    color: var(--text);
+}
+
+.editorial-main h3 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    margin: 0.75rem 0 0.6rem;
+}
+
+.editorial-main p {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.editorial-meta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    font-size: 0.82rem;
+    color: var(--text-tertiary);
+}
+
+.editorial-author {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.editorial-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.editorial-item {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text);
+    transition: background 0.15s;
+}
+
+.editorial-item:last-child { border-bottom: none; }
+.editorial-item:hover { background: var(--surface-hover); color: var(--text); }
+
+.editorial-item-cat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.35rem;
+}
+
+.editorial-item h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 0.25rem;
+}
+
+.editorial-item p {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+}
+
+/* ─── D. 성공 사례 — Magazine Asymmetric (65/35) ─── */
+.section-cases {
+    padding: 3rem 0;
+}
+
+.cases-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr;
+    gap: 2rem;
+}
+
+.case-featured {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    color: var(--text);
+    transition: all 0.2s ease;
+}
+
+.case-featured:hover {
+    box-shadow: var(--shadow-lg);
+    color: var(--text);
+}
+
+.case-featured h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1.4;
+    margin: 0.75rem 0 1rem;
+}
+
+.case-featured blockquote {
+    font-size: 1.05rem;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--accent);
+    margin: 0 0 1.25rem 0;
+}
+
+.case-author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: auto;
+}
+
+.case-avatar {
+    width: 42px;
+    height: 42px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+.case-author strong {
+    display: block;
+    font-size: 0.88rem;
+    color: var(--text);
+}
+
+.case-author span {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+}
+
+.case-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.case-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text);
+    transition: color 0.15s;
+}
+
+.case-item:last-child { border-bottom: none; }
+.case-item:hover { color: var(--secondary); }
+
+.case-item-num {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--accent);
+    min-width: 2rem;
+    line-height: 1.2;
+}
+
+.case-item-body h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 0.2rem;
+}
+
+.case-item-body span {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+}
+
+/* ─── E. 파운더스 보이스 — Column/Op-Ed 2×2 Grid ─── */
+.section-voice {
+    padding: 3rem 0;
+    background: var(--bg-secondary);
+}
+
+.voice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+.voice-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+    color: var(--text);
+    transition: border-color 0.2s;
+}
+
+.voice-card:hover {
+    border-color: var(--primary);
+    color: var(--text);
+}
+
+.voice-author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.voice-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--secondary);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+}
+
+.voice-author strong {
+    display: block;
+    font-size: 0.9rem;
+}
+
+.voice-author span {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+.voice-quote {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.7;
+    color: var(--text);
+    position: relative;
+    padding-left: 1.5rem;
+    margin: 0 0 0.75rem 0;
+}
+
+.voice-quote::before {
+    content: '"';
+    position: absolute;
+    left: 0;
+    top: -0.3rem;
+    font-size: 2.5rem;
+    color: var(--primary);
+    opacity: 0.25;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.voice-date {
+    font-size: 0.72rem;
+    color: var(--text-tertiary);
+}
+
+/* ─── F. AI/DX 랩 — Review/Tool Cards ─── */
+.section-lab {
+    padding: 3rem 0;
+}
+
+.lab-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+.lab-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    color: var(--text);
+    transition: box-shadow 0.2s ease;
+}
+
+.lab-card:hover {
+    box-shadow: var(--shadow-md);
+    color: var(--text);
+}
+
+.lab-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.lab-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+}
+
+.lab-card-header h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.lab-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.lab-score {
+    font-weight: 800;
+    font-size: 0.88rem;
+    color: var(--primary);
+}
+
+.lab-stars {
+    color: var(--accent);
+    font-size: 0.92rem;
+    letter-spacing: 1px;
+}
+
+.lab-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    flex-grow: 1;
+    margin-bottom: 1rem;
+}
+
+.lab-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.lab-tags span {
+    background: var(--bg-secondary);
+    color: var(--secondary);
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+}
+
+/* ─── Cycle 3 Responsive ─── */
+@media (max-width: 1024px) {
+    .radar-grid { grid-template-columns: repeat(2, 1fr); }
+    .playbook-strip { grid-template-columns: repeat(2, 1fr); }
+    .editorial-grid { grid-template-columns: 1fr; }
+    .cases-grid { grid-template-columns: 1fr; }
+    .voice-grid { grid-template-columns: 1fr; }
+    .lab-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .radar-grid { grid-template-columns: 1fr; }
+    .playbook-strip { grid-template-columns: 1fr; }
+    .lab-grid { grid-template-columns: 1fr; }
+
+    .editorial-main { min-height: 200px; padding: 1.5rem; }
+    .editorial-main h3 { font-size: 1.25rem; }
+    .case-featured h3 { font-size: 1.15rem; }
+}

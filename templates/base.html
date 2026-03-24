@@ -24,29 +24,24 @@
         <div class="header-inner">
             <a href="/" class="logo">founders<span>korea</span></a>
             <nav class="desktop-nav">
-                {% if categories is defined %}
-                {% for cat in categories %}
-                <a href="/{{ cat.slug }}"
-                   {% if active_category is defined and active_category == cat.slug %}class="active"{% endif %}>{{ cat.name }}</a>
-                {% endfor %}
-                {% endif %}
-                <a href="/gov-support/db"{% if active_page is defined and active_page == 'gov-db' %} class="active"{% endif %}>지원사업 DB</a>
-                <a href="/onboarding"{% if active_page is defined and active_page == 'onboarding' %} class="active"{% endif %}>AI 매칭</a>
-                <a href="/about"{% if active_page is defined and active_page == 'about' %} class="active"{% endif %}>소개</a>
+                <a href="/gov-support" class="nav-priority{% if active_category is defined and active_category == 'gov-support' or active_page is defined and active_page == 'gov-support' %} active{% endif %}">정부지원 레이더</a>
+                <a href="/startup"{% if active_category is defined and active_category == 'startup' %} class="active"{% endif %}>성장 플레이북</a>
+                <a href="/investment"{% if active_category is defined and active_category == 'investment' %} class="active"{% endif %}>성공 사례</a>
+                <a href="/networking"{% if active_category is defined and active_category == 'networking' %} class="active"{% endif %}>파운더스 보이스</a>
+                <a href="/know-how"{% if active_category is defined and active_category == 'know-how' %} class="active"{% endif %}>AI/DX 랩</a>
+                <a href="/onboarding" class="btn btn-secondary btn-sm nav-cta">AI 매칭</a>
             </nav>
             <button class="hamburger" onclick="toggleMobileNav()" aria-label="메뉴">
                 <span></span><span></span><span></span>
             </button>
         </div>
         <div class="mobile-nav" id="mobileNav">
-            {% if categories is defined %}
-            {% for cat in categories %}
-            <a href="/{{ cat.slug }}">{{ cat.name }}</a>
-            {% endfor %}
-            {% endif %}
-            <a href="/gov-support/db">지원사업 DB</a>
-            <a href="/onboarding">AI 매칭</a>
-            <a href="/about">소개</a>
+            <a href="/gov-support">정부지원 레이더</a>
+            <a href="/startup">성장 플레이북</a>
+            <a href="/investment">성공 사례</a>
+            <a href="/networking">파운더스 보이스</a>
+            <a href="/know-how">AI/DX 랩</a>
+            <a href="/onboarding" class="btn btn-secondary btn-sm nav-cta">AI 매칭</a>
         </div>
     </header>
 
@@ -59,24 +54,24 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <a href="/" class="logo">founders<span>korea</span></a>
-                    <p>대한민국 창업자를 위한 신뢰받는 정보 허브.<br>스타트업 생태계의 성장을 함께 만들어갑니다.</p>
+                    <p>B2B SaaS 창업자를 위한<br>성장 솔루션 플랫폼</p>
                 </div>
                 <div class="footer-col">
-                    <h4>카테고리</h4>
-                    {% if categories is defined %}
-                    {% for cat in categories %}
-                    <a href="/{{ cat.slug }}">{{ cat.name }}</a>
-                    {% endfor %}
-                    {% endif %}
+                    <h4>콘텐츠</h4>
+                    <a href="/gov-support">정부지원 레이더</a>
+                    <a href="/startup">성장 플레이북</a>
+                    <a href="/investment">성공 사례</a>
+                    <a href="/networking">파운더스 보이스</a>
+                    <a href="/know-how">AI/DX 랩</a>
                 </div>
                 <div class="footer-col">
-                    <h4>서비스</h4>
+                    <h4>솔루션</h4>
                     <a href="/gov-support/db">정부지원사업 DB</a>
                     <a href="/onboarding">AI 매칭</a>
-                    <a href="/feed.xml">RSS 피드</a>
+                    <a href="/feed.xml">뉴스레터</a>
                 </div>
                 <div class="footer-col">
-                    <h4>안내</h4>
+                    <h4>회사</h4>
                     <a href="/about">소개</a>
                     <a href="/sitemap.xml">사이트맵</a>
                 </div>

@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>파운더스코리아 월드 — 아이소메트릭 오피스</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --primary-light: #2a5585;
+    --primary-dark: #0f2238;
+    --accent: #e8c547;
+    --accent-dark: #c9a92e;
+    --bg: #f8f6f0;
+    --bg-warm: #f0ede4;
+    --surface: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --gray: #9ca3af;
+    --red: #ef4444;
+    --shadow: 0 4px 24px rgba(26,58,92,0.12);
+    --shadow-lg: 0 8px 48px rgba(26,58,92,0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: var(--primary-dark);
+    border-bottom: 2px solid var(--accent);
+    padding: 0 32px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-logo {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--primary-dark);
+    letter-spacing: -1px;
+  }
+
+  .header-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 1px;
+  }
+
+  .header-title span {
+    color: var(--accent);
+  }
+
+  .header-subtitle {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .header-legend {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+  }
+
+  .legend-dot.active { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .legend-dot.meeting { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+  .legend-dot.away { background: var(--gray); }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.2); }
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 16px;
+  }
+
+  .stat-pill {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-pill-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 4px var(--green);
+  }
+
+  /* ── MAIN CANVAS ── */
+  .canvas {
+    padding-top: 64px;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #e8e4d9 0%, #f8f6f0 40%, #eef2f8 100%);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* floating particles */
+  .particles {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    animation: float-particle var(--dur) var(--delay) infinite ease-in-out;
+  }
+
+  @keyframes float-particle {
+    0% { opacity: 0; transform: translateY(0) scale(0); }
+    10% { opacity: 0.4; transform: translateY(-20px) scale(1); }
+    90% { opacity: 0.2; transform: translateY(-120px) scale(0.5); }
+    100% { opacity: 0; transform: translateY(-160px) scale(0); }
+  }
+
+  /* ── ISOMETRIC STAGE ── */
+  .iso-stage {
+    position: relative;
+    z-index: 1;
+    padding: 60px 40px 120px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .iso-world {
+    position: relative;
+    width: 1100px;
+    height: 900px;
+  }
+
+  /* isometric transform helper */
+  .iso-group {
+    position: absolute;
+    transform-style: preserve-3d;
+  }
+
+  /* ── FLOOR ZONES ── */
+  .zone {
+    position: absolute;
+    border-radius: 4px;
+  }
+
+  /* isometric parallelogram floor tiles using clip-path */
+  .floor-tile {
+    position: absolute;
+    transform-origin: top left;
+  }
+
+  /* Zone labels */
+  .zone-label {
+    position: absolute;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    pointer-events: none;
+  }
+
+  .zone-label-badge {
+    background: var(--primary);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border-left: 3px solid var(--accent);
+    white-space: nowrap;
+    box-shadow: var(--shadow);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .zone-label-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    padding-left: 4px;
+  }
+
+  /* ── ISOMETRIC DESK ── */
+  .iso-desk {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .desk-body {
+    position: relative;
+    width: 90px;
+    height: 50px;
+    transition: filter 0.2s;
+  }
+
+  .iso-desk:hover .desk-body { filter: brightness(1.05); }
+
+  /* Desk top face */
+  .desk-top {
+    position: absolute;
+    width: 90px;
+    height: 30px;
+    top: 0; left: 0;
+    transform: skewX(-20deg);
+    border-radius: 2px;
+  }
+
+  /* Desk front face */
+  .desk-front {
+    position: absolute;
+    width: 90px;
+    height: 20px;
+    top: 22px; left: 0;
+    border-radius: 0 0 3px 3px;
+  }
+
+  /* Desk right side */
+  .desk-side {
+    position: absolute;
+    width: 14px;
+    height: 22px;
+    top: 10px; right: -11px;
+    transform: skewY(-35deg);
+  }
+
+  .desk-shadow {
+    position: absolute;
+    bottom: -8px; left: 8px;
+    width: 85px; height: 12px;
+    background: rgba(26,58,92,0.15);
+    border-radius: 50%;
+    filter: blur(4px);
+  }
+
+  /* Monitor */
+  .monitor {
+    position: absolute;
+    top: -22px; left: 28px;
+    width: 30px;
+    z-index: 5;
+  }
+
+  .monitor-screen {
+    width: 30px; height: 20px;
+    background: linear-gradient(135deg, #1a3a5c, #2a6098);
+    border: 2px solid #0f2238;
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .monitor-screen::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: linear-gradient(135deg, rgba(232,197,71,0.3), rgba(42,96,152,0.5));
+    border-radius: 1px;
+    animation: screen-glow 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes screen-glow {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+  }
+
+  .monitor-stand {
+    width: 8px; height: 6px;
+    background: #374151;
+    margin: 0 auto;
+    clip-path: trapezoid;
+  }
+
+  .monitor-base {
+    width: 18px; height: 3px;
+    background: #374151;
+    margin: 0 auto;
+    border-radius: 2px;
+  }
+
+  /* ── AVATAR ── */
+  .avatar-wrap {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 20;
+    cursor: pointer;
+    animation: avatar-idle var(--idle-speed, 3s) ease-in-out infinite;
+  }
+
+  @keyframes avatar-idle {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-3px); }
+  }
+
+  .avatar-figure {
+    position: relative;
+    width: 36px;
+  }
+
+  .avatar-head {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    margin: 0 auto;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .avatar-head::after {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px;
+    width: 6px; height: 6px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+  }
+
+  /* hair */
+  .avatar-hair {
+    position: absolute;
+    top: -2px; left: 50%;
+    transform: translateX(-50%);
+    width: 24px; height: 10px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .avatar-face {
+    position: absolute;
+    top: 7px; left: 5px;
+    width: 12px; height: 8px;
+  }
+
+  .avatar-face::before {
+    /* eyes */
+    content: '';
+    position: absolute;
+    top: 1px; left: 1px;
+    width: 3px; height: 3px;
+    background: #333;
+    border-radius: 50%;
+    box-shadow: 6px 0 0 #333;
+  }
+
+  .avatar-face::after {
+    /* smile */
+    content: '';
+    position: absolute;
+    bottom: 0; left: 2px;
+    width: 8px; height: 4px;
+    border-bottom: 2px solid #555;
+    border-radius: 0 0 4px 4px;
+  }
+
+  .avatar-body {
+    width: 28px; height: 18px;
+    border-radius: 6px 6px 2px 2px;
+    margin: 1px auto 0;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  /* collar */
+  .avatar-body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 8px; height: 6px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 0 0 4px 4px;
+  }
+
+  .avatar-legs {
+    width: 20px; height: 10px;
+    margin: 1px auto 0;
+    display: flex;
+    gap: 4px;
+  }
+
+  .avatar-leg {
+    flex: 1;
+    background: #4b5563;
+    border-radius: 2px;
+  }
+
+  .status-dot {
+    position: absolute;
+    top: 0; right: -2px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 2px solid white;
+    animation: blink-status 2s ease-in-out infinite;
+  }
+
+  .status-dot.active { background: var(--green); box-shadow: 0 0 4px var(--green); }
+  .status-dot.meeting { background: var(--yellow); box-shadow: 0 0 4px var(--yellow); }
+  .status-dot.away { background: var(--gray); animation: none; }
+
+  @keyframes blink-status {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .avatar-nametag {
+    margin-top: 4px;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(26,58,92,0.15);
+    border-radius: 8px;
+    padding: 2px 7px;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    backdrop-filter: blur(4px);
+  }
+
+  .nametag-name {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--primary);
+    display: block;
+  }
+
+  .nametag-role {
+    font-size: 9px;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  /* ── TOOLTIP ── */
+  .tooltip {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.9);
+    background: var(--primary-dark);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 11px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 100;
+    border: 1px solid rgba(232,197,71,0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--primary-dark);
+  }
+
+  .tooltip-task {
+    color: var(--accent);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .tooltip-time {
+    color: rgba(255,255,255,0.5);
+    font-size: 10px;
+  }
+
+  .iso-desk:hover .tooltip {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+
+  /* ── PROFILE CARD (slide-in) ── */
+  .profile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,34,56,0.5);
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(4px);
+  }
+
+  .profile-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .profile-card {
+    position: fixed;
+    right: -400px;
+    top: 0; bottom: 0;
+    width: 360px;
+    background: white;
+    z-index: 2001;
+    box-shadow: -8px 0 48px rgba(0,0,0,0.2);
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .profile-card.open { right: 0; }
+
+  .profile-card-header {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    padding: 32px 28px 24px;
+    position: relative;
+  }
+
+  .profile-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.1);
+    border: none; border-radius: 50%;
+    color: white; font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .profile-close:hover { background: rgba(255,255,255,0.2); }
+
+  .profile-avatar-lg {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 3px solid var(--accent);
+    margin-bottom: 12px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    background: var(--bg-warm);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+
+  .profile-status-badge {
+    position: absolute;
+    bottom: 2px; right: 2px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+
+  .profile-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+  }
+
+  .profile-role-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary-dark);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+
+  .profile-current-task {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .task-indicator {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 4px var(--green);
+    flex-shrink: 0;
+    animation: pulse-dot 1.5s infinite;
+  }
+
+  .profile-body {
+    padding: 24px 28px;
+    flex: 1;
+  }
+
+  .profile-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    margin-top: 20px;
+  }
+
+  .profile-section-title:first-child { margin-top: 0; }
+
+  .article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .article-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: 10px;
+    border-left: 3px solid var(--primary);
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .article-item:hover { background: var(--bg-warm); }
+
+  .article-icon {
+    width: 28px; height: 28px;
+    background: var(--primary);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .article-info { flex: 1; }
+
+  .article-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 2px;
+  }
+
+  .article-meta {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .article-badge {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(34,197,94,0.1);
+    color: #16a34a;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .article-badge.draft {
+    background: rgba(245,158,11,0.1);
+    color: #d97706;
+  }
+
+  .profile-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .profile-stat {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+
+  .profile-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    display: block;
+  }
+
+  .profile-stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 2px;
+  }
+
+  .contact-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 20px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+  }
+
+  .contact-btn:hover { background: var(--primary-light); }
+  .contact-btn:active { transform: scale(0.98); }
+
+  /* ── OFFICE FURNITURE ── */
+  /* Plants */
+  .plant {
+    position: absolute;
+    z-index: 15;
+  }
+
+  .plant-pot {
+    width: 18px; height: 16px;
+    border-radius: 0 0 8px 8px;
+    margin: 0 auto;
+  }
+
+  .plant-leaf-wrap {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    margin: 0 auto;
+  }
+
+  .plant-leaf {
+    position: absolute;
+    background: #22c55e;
+    border-radius: 50% 0;
+  }
+
+  .plant-leaf:nth-child(1) { width: 14px; height: 20px; top: 5px; left: 2px; transform: rotate(-20deg); }
+  .plant-leaf:nth-child(2) { width: 16px; height: 22px; top: 2px; left: 10px; transform: rotate(20deg); background: #16a34a; }
+  .plant-leaf:nth-child(3) { width: 12px; height: 16px; top: 8px; right: 2px; transform: rotate(40deg); background: #4ade80; }
+
+  /* Coffee machine */
+  .coffee-machine {
+    position: absolute;
+    z-index: 15;
+  }
+
+  .coffee-body {
+    width: 28px;
+    height: 36px;
+    background: linear-gradient(135deg, #374151, #1f2937);
+    border-radius: 4px;
+    position: relative;
+    border: 1px solid #4b5563;
+  }
+
+  .coffee-screen {
+    position: absolute;
+    top: 6px; left: 4px;
+    width: 20px; height: 12px;
+    background: #1a3a5c;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .coffee-screen::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: linear-gradient(135deg, rgba(232,197,71,0.6), rgba(232,197,71,0.1));
+    border-radius: 1px;
+    animation: screen-glow 2s infinite alternate;
+  }
+
+  .coffee-dispenser {
+    position: absolute;
+    bottom: 6px; left: 50%;
+    transform: translateX(-50%);
+    width: 10px; height: 12px;
+    background: #6b7280;
+    border-radius: 1px;
+  }
+
+  .coffee-cup {
+    position: absolute;
+    bottom: -8px; left: 50%;
+    transform: translateX(-50%);
+    width: 12px; height: 10px;
+    background: white;
+    border-radius: 1px 1px 3px 3px;
+    border: 1px solid #e5e7eb;
+  }
+
+  /* Couch */
+  .couch {
+    position: absolute;
+    z-index: 8;
+  }
+
+  .couch-back {
+    height: 24px;
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    border-radius: 8px 8px 0 0;
+    position: relative;
+  }
+
+  .couch-seat {
+    height: 16px;
+    background: #8b5cf6;
+    border-radius: 0 0 6px 6px;
+    position: relative;
+  }
+
+  .couch-arm {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 12px;
+    background: #6d28d9;
+    border-radius: 4px;
+  }
+
+  .couch-arm.left { left: -6px; }
+  .couch-arm.right { right: -6px; }
+
+  /* Whiteboard */
+  .whiteboard {
+    position: absolute;
+    z-index: 5;
+  }
+
+  .wb-board {
+    border: 3px solid #d1d5db;
+    background: #fafafa;
+    border-radius: 4px;
+    padding: 6px;
+    position: relative;
+  }
+
+  .wb-line {
+    height: 2px;
+    background: rgba(26,58,92,0.15);
+    border-radius: 1px;
+    margin-bottom: 5px;
+  }
+
+  .wb-line:last-child { margin-bottom: 0; width: 70%; }
+
+  .wb-marker {
+    position: absolute;
+    bottom: -8px; right: 4px;
+    width: 20px; height: 6px;
+    background: var(--accent);
+    border-radius: 2px;
+    transform: rotate(-15deg);
+  }
+
+  /* Floor grid */
+  .floor-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  /* Zone floor areas */
+  .zone-floor {
+    position: absolute;
+    border-radius: 8px;
+  }
+
+  /* Area divider lines */
+  .divider {
+    position: absolute;
+    background: rgba(26,58,92,0.1);
+    z-index: 2;
+  }
+
+  /* Floating activity badges */
+  .activity-badge {
+    position: absolute;
+    z-index: 30;
+    background: white;
+    border-radius: 20px;
+    padding: 4px 10px 4px 6px;
+    font-size: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    animation: float-badge 4s ease-in-out infinite;
+    border: 1px solid rgba(26,58,92,0.08);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  @keyframes float-badge {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .activity-badge-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  /* ── AREA BACKGROUNDS ── */
+  .area-bg {
+    position: absolute;
+    border-radius: 16px;
+    z-index: 1;
+  }
+
+  /* grid lines overlay */
+  .iso-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      linear-gradient(rgba(26,58,92,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,58,92,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">FK</div>
+    <div>
+      <div class="header-title">파운더스코리아 <span>WORLD</span></div>
+      <div class="header-subtitle">Virtual Office · Isometric View</div>
+    </div>
+  </div>
+
+  <div class="header-legend">
+    <div class="legend-item">
+      <div class="legend-dot active"></div>
+      <span>작업중</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot meeting"></div>
+      <span>회의중</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot away"></div>
+      <span>자리비움</span>
+    </div>
+  </div>
+
+  <div class="header-stats">
+    <div class="stat-pill">
+      <div class="stat-pill-dot"></div>
+      <span>8명 온라인</span>
+    </div>
+    <div class="stat-pill">📝 오늘 발행 3건</div>
+    <div class="stat-pill">🕐 오후 2:34</div>
+  </div>
+</header>
+
+<!-- MAIN CANVAS -->
+<main class="canvas">
+  <div class="iso-grid"></div>
+
+  <div class="iso-stage">
+    <div class="iso-world" id="isoWorld">
+
+      <!-- ═══════════════════════════════════ -->
+      <!--  ZONE FLOORS                        -->
+      <!-- ═══════════════════════════════════ -->
+
+      <!-- Newsroom 편집국 -->
+      <div class="area-bg" style="
+        left: 20px; top: 60px;
+        width: 480px; height: 320px;
+        background: linear-gradient(135deg, rgba(26,58,92,0.06), rgba(26,58,92,0.02));
+        border: 2px solid rgba(26,58,92,0.1);
+      "></div>
+
+      <!-- Strategy 전략실 -->
+      <div class="area-bg" style="
+        left: 20px; top: 420px;
+        width: 480px; height: 280px;
+        background: linear-gradient(135deg, rgba(232,197,71,0.06), rgba(232,197,71,0.02));
+        border: 2px solid rgba(232,197,71,0.15);
+      "></div>
+
+      <!-- Tech 기술팀 -->
+      <div class="area-bg" style="
+        left: 560px; top: 60px;
+        width: 480px; height: 320px;
+        background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(124,58,237,0.02));
+        border: 2px solid rgba(124,58,237,0.1);
+      "></div>
+
+      <!-- Lounge 라운지 -->
+      <div class="area-bg" style="
+        left: 560px; top: 420px;
+        width: 480px; height: 280px;
+        background: linear-gradient(135deg, rgba(34,197,94,0.06), rgba(34,197,94,0.02));
+        border: 2px solid rgba(34,197,94,0.1);
+      "></div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!--  ZONE LABELS                        -->
+      <!-- ═══════════════════════════════════ -->
+
+      <div class="zone-label" style="left: 28px; top: 68px;">
+        <div class="zone-label-badge" style="border-left-color: #1a3a5c;">📰 편집국</div>
+        <div class="zone-label-sub">Newsroom · 3명</div>
+      </div>
+
+      <div class="zone-label" style="left: 28px; top: 428px;">
+        <div class="zone-label-badge" style="border-left-color: var(--accent);">📊 전략실</div>
+        <div class="zone-label-sub">Strategy Room · 2명</div>
+      </div>
+
+      <div class="zone-label" style="left: 568px; top: 68px;">
+        <div class="zone-label-badge" style="border-left-color: #7c3aed;">💻 기술팀</div>
+        <div class="zone-label-sub">Tech Team · 2명</div>
+      </div>
+
+      <div class="zone-label" style="left: 568px; top: 428px;">
+        <div class="zone-label-badge" style="border-left-color: #22c55e;">☕ 라운지</div>
+        <div class="zone-label-sub">Lounge · 1명</div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!--  NEWSROOM DESKS (편집국)             -->
+      <!-- ═══════════════════════════════════ -->
+
+      <!-- Desk 1 — 김편집 (Chief Editor) -->
+      <div class="iso-desk" style="left: 60px; top: 120px;"
+           onclick="openProfile(0)">
+        <div class="desk-body">
+          <div class="desk-top" style="background: linear-gradient(135deg, #c8b89a, #b5a587);"></div>
+          <div class="desk-front" style="background: #8b7355;"></div>
+          <div class="desk-side" style="background: #6b5843;"></div>
+          <div class="desk-shadow"></div>
+        </div>
+        <div class="monitor">
+          <div class="monitor-screen"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="avatar-wrap" style="--idle-speed:3.2s;">
+          <div class="avatar-figure">
+            <div class="avatar-head" style="background: #f5cba7;">
+              <div class="avatar-hair" style="background: #1a1a1a;"></div>
+              <div class="avatar-face"></div>
+            </div>
+            <div class="status-dot active"></div>
+            <div class="avatar-body" style="background: var(--primary);"></div>
+            <div class="avatar-legs"><div class="avatar-leg"></div><div class="avatar-leg"></div></div>
+          </div>
+          <div class="avatar-nametag">
+            <span class="nametag-name">김편집</span>
+            <span class="nametag-role">편집장</span>
+          </div>
+        </div>
+        <div class="tooltip">
+          <span class="tooltip-task">🤖 AI 투자 시그널 기사 검토 중</span>
+          <span class="tooltip-time">약 25분째 작업</span>
+        </div>
+      </div>
+
+      <!-- Desk 2 — 이기자 (Reporter) -->
+      <div class="iso-desk" style="left: 220px; top: 110px;"
+           onclick="openProfile(1)">
+        <div class="desk-body">
+          <div class="desk-top" style="background: linear-gradient(135deg, #c8b89a, #b5a587);"></div>
+          <div class="desk-front" style="background: #8b7355;"></div>
+          <div class="desk-side" style="background: #6b5843;"></div>
+          <div class="desk-shadow"></div>
+        </div>
+        <div class="monitor">
+          <div class="monitor-screen"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="avatar-wrap" style="--idle-speed:2.8s;">
+          <div class="avatar-figure">
+            <div class="avatar-head" style="background: #fad7a0;">
+              <div class="avatar-hair" style="background: #4a2c00;"></div>
+              <div class="avatar-face"></div>
+            </div>
+            <div class="status-dot active"></div>
+            <div class="avatar-body" style="background: #dc2626;"></div>
+            <div class="avatar-legs"><div class="avatar-leg"></div><div class="avatar-leg"></div></div>
+          </div>
+          <div class="avatar-nametag">
+            <span class="nametag-name">이기자</span>
+            <span class="nametag-role">선임기자</span>
+          </div>
+        </div>
+        <div class="tooltip">
+          <span class="tooltip-task">✍️ 클로드 코드 오토모드 기사 작성</span>
+          <span class="tooltip-time">약 40분째 작업</span>
+        </div>
+      </div>
+
+      <!-- Desk 3 — 박에디터 (Editor) -->
+      <div class="iso-desk" style="left: 370px; top: 130px;"
+           onclick="openProfile(2)">
+        <div class="desk-body">
+          <div class="desk-top" style="background: linear-gradient(135deg, #c8b89a, #b5a587);"></div>
+          <div class="desk-front" style="background: #8b7355;"></div>
+          <div class="desk-side" style="background: #6b5843;"></div>
+          <div class="desk-shadow"></div>
+        </div>
+        <div class="monitor">
+          <div class="monitor-screen"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="avatar-wrap" style="--idle-speed:3.5s;">
+          <div class="avatar-figure">
+            <div class="avatar-head" style="background: #f8c29c;">
+              <div class="avatar-hair" style="background: #6b3a2a;"></div>
+              <div class="avatar-face"></div>
+            </div>
+            <div class="status-dot meeting"></div>
+            <div class="avatar-body" style="background: #059669;"></div>
+            <div class="avatar-legs"><div class="avatar-leg"></div><div class="avatar-leg"></div></div>
+          </div>
+          <div class="avatar-nametag">
+            <span class="nametag-name">박에디터</span>
+            <span class="nametag-role">에디터</span>
+          </div>
+        </div>
+        <div class="tooltip">
+          <span class="tooltip-task">📞 화상 편집회의 참여 중</span>
+          <span class="tooltip-time">오후 2:00 시작</span>
+        </div>
+      </div>
+
+      <!-- Newsroom second row -->
+      <!-- Desk 4 — 최콘텐츠 (Content) -->
+      <div class="iso-desk" style="left: 140px; top: 260px;"
+           onclick="openProfile(3)">
+        <div class="desk-body">
+          <div class="desk-top" style="background: linear-gradient(135deg, #c8b89a, #b5a587);"></div>
+          <div class="desk-front" style="background: #8b7355;"></div>
+          <div class="desk-side" style="background: #6b5843;"></div>
+          <div class="desk-shadow"></div>
+        </div>
+        <div class="monitor">
+          <div class="monitor-screen"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="avatar-wrap" style="--idle-speed:4s;">
+          <div class="avatar-figure">
+            <div class="avatar-head" style="background: #f0c27f;">
+              <div class="avatar-hair" style="background: #0f0f0f;"></div>
+              <div class="avatar-face"></div>
+            </div>
+            <div class="status-dot active"></div>
+            <div class="avatar-body" style="background: #7c3aed;"></div>
+            <div class="avatar-legs"><div class="avatar-leg"></div><div class="avatar-leg"></div></div>
+          </div>
+          <div class="avatar-nametag">
+            <span class="nametag-name">최콘텐츠</span>
+            <span class="nametag-role">콘텐츠</span>
+          </div>
+        </div>
+        <div class="tooltip">
+          <span class="tooltip-task">🎨 바이브코딩 썸네일 디자인</span>
+          <span class="tooltip-time">약 15분째 작업</span>
+        </div>
+      </div>
+
+      <!-- Whiteboard in newsroom -->
+      <div class="whiteboard" style="left: 420px; top: 240px;">
+        <div class="wb-board" style="width: 80px;">
+          <div class="wb-line" style="width:100%"></div>
+          <div class="wb-line" style="width:80%"></div>
+          <div class="wb-line" style="width:60%"></div>
+          <div class="wb-marker"></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!--  STRATEGY ROOM DESKS (전략실)        -->
+      <!-- ═══════════════════════════════════ -->
+
+      <!-- Desk 5 — 정전략 (Strategist) -->
+      <div class="iso-desk" style="left: 80px; top: 475px;"
+           onclick="openProfile(4)">
+        <div class="desk-body">
+          <div class="desk-top" style="background: linear-gradient(135deg, #dbc9a0, #c9b48a);"></div>
+          <div class="desk-front" style="background: #9a7c50;"></div>
+          <div class="desk-side" style="background: #7a5c38;"></div>
+          <div class="desk-shadow"></div>
+        </div>
+        <div class="monitor">
+          <div class="monitor-screen"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="avatar-wrap" style="--idle-speed:3.7s;">
+          <div class="avatar-figure">
+            <div class="avatar-head" style="background: #fad7a0;">
+              <div class="avatar-hair" style="background: #2c2c2c; top:-1px;"></div>
+              <div class="avatar-face"></div>
+            </div>
+            <div class="status-dot meeting"></div>
+            <div class="avatar-body" style="background: #1a3a5c;"></div>
+            <div class="avatar-legs"><div class="avatar-leg"></div><div class="avatar-leg"></div></div>
+          </div>
+          <div class="avatar-nametag">
+            <span class="nametag-name">정전략</span>
+            <span class="nametag-role">전략이사</span>
+          </div>
+        </div>
+        <div class="tooltip">
+          <span class="tooltip-task">📈 Q2 광고 전략 보고서 작성</span>
+          <span class="tooltip-time">마감: 오늘 오후 6시</span>
+        </div>
+      </div>
+
+      <!-- Desk 6 — 한파트너 (Partner) -->
+      <div class="iso-desk" style="left: 270px; top: 490px;"
+           onclick="openProfile(5)">
+        <div class="desk-body">
+          <div class="desk-top" style="background: linear-gradient(135deg, #dbc9a0, #c9b48a);"></div>
+          <div class="desk-front" style="background: #9a7c50;"></div>
+          <div class="desk-side" style="background: #7a5c38;"></div>
+          <div class="desk-shadow"></div>
+        </div>
+        <div class="monitor">
+          <div class="monitor-screen"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="avatar-wrap" style="--idle-speed:2.5s;">
+          <div class="avatar-figure">
+            <div class="avatar-head" style="background: #f5cba7;">
+              <div class="avatar-hair" style="background: #5c3a1e;"></div>
+              <div class="avatar-face"></div>
+            </div>
+            <div class="status-dot away"></div>
+            <div class="avatar-body" style="background: #d97706;"></div>
+            <div class="avatar-legs"><div class="avatar-leg"></div><div class="avatar-leg"></div></div>
+          </div>
+          <div class="avatar-nametag">
+            <span class="nametag-name">한파트너</span>
+            <span class="nametag-role">파트너십</span>
+          </div>
+        </div>
+        <div class="tooltip">
+          <span class="tooltip-task">🚶 외부 미팅 외출 중</span>
+          <span class="tooltip-time">오후 4시 복귀 예정</span>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!--  TECH TEAM DESKS (기술팀)            -->
+      <!-- ═══════════════════════════════════ -->
+
+      <!-- Desk 7 — 송개발 (Developer) -->
+      <div class="iso-desk" style="left: 600px; top: 110px;"
+           onclick="openProfile(6)">
+        <div class="desk-body">
+          <div class="desk-top" style="background: linear-gradient(135deg, #bdc8d8, #a8b6c8);"></div>
+          <div class="desk-front" style="background: #7a8ba0;"></div>
+          <div class="desk-side" style="background: #5a6b80;"></div>
+          <div class="desk-shadow"></div>
+        </div>
+        <!-- Dual monitors for dev -->
+        <div class="monitor" style="left: 8px;">
+          <div class="monitor-screen" style="width:28px;"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="monitor" style="left: 46px;">
+          <div class="monitor-screen" style="width:28px;"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="avatar-wrap" style="--idle-speed:4.2s; left: 45%;">
+          <div class="avatar-figure">
+            <div class="avatar-head" style="background: #f8c29c;">
+              <div class="avatar-hair" style="background: #1a1a1a;"></div>
+              <div class="avatar-face"></div>
+            </div>
+            <div class="status-dot active"></div>
+            <div class="avatar-body" style="background: #374151;"></div>
+            <div class="avatar-legs"><div class="avatar-leg"></div><div class="avatar-leg"></div></div>
+          </div>
+          <div class="avatar-nametag">
+            <span class="nametag-name">송개발</span>
+            <span class="nametag-role">풀스택</span>
+          </div>
+        </div>
+        <div class="tooltip">
+          <span class="tooltip-task">⚡ Article Pool API 배포 중</span>
+          <span class="tooltip-time">CI/CD 파이프라인 실행 중</span>
+        </div>
+      </div>
+
+      <!-- Desk 8 — 윤디자인 (Designer) -->
+      <div class="iso-desk" style="left: 780px; top: 125px;"
+           onclick="openProfile(7)">
+        <div class="desk-body">
+          <div class="desk-top" style="background: linear-gradient(135deg, #bdc8d8, #a8b6c8);"></div>
+          <div class="desk-front" style="background: #7a8ba0;"></div>
+          <div class="desk-side" style="background: #5a6b80;"></div>
+          <div class="desk-shadow"></div>
+        </div>
+        <div class="monitor">
+          <div class="monitor-screen"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="avatar-wrap" style="--idle-speed:3.1s;">
+          <div class="avatar-figure">
+            <div class="avatar-head" style="background: #fad7a0;">
+              <div class="avatar-hair" style="background: #7c3aed;"></div>
+              <div class="avatar-face"></div>
+            </div>
+            <div class="status-dot active"></div>
+            <div class="avatar-body" style="background: #ec4899;"></div>
+            <div class="avatar-legs"><div class="avatar-leg"></div><div class="avatar-leg"></div></div>
+          </div>
+          <div class="avatar-nametag">
+            <span class="nametag-name">윤디자인</span>
+            <span class="nametag-role">UI/UX</span>
+          </div>
+        </div>
+        <div class="tooltip">
+          <span class="tooltip-task">🎨 아이소메트릭 오피스 목업 완성 중</span>
+          <span class="tooltip-time">약 2시간째 작업</span>
+        </div>
+      </div>
+
+      <!-- Tech team — extra desk -->
+      <!-- Desk 9 — 강데브옵스 -->
+      <div class="iso-desk" style="left: 690px; top: 270px;"
+           onclick="openProfile(8)">
+        <div class="desk-body">
+          <div class="desk-top" style="background: linear-gradient(135deg, #bdc8d8, #a8b6c8);"></div>
+          <div class="desk-front" style="background: #7a8ba0;"></div>
+          <div class="desk-side" style="background: #5a6b80;"></div>
+          <div class="desk-shadow"></div>
+        </div>
+        <div class="monitor">
+          <div class="monitor-screen"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="avatar-wrap" style="--idle-speed:3.8s;">
+          <div class="avatar-figure">
+            <div class="avatar-head" style="background: #f5cba7;">
+              <div class="avatar-hair" style="background: #374151;"></div>
+              <div class="avatar-face"></div>
+            </div>
+            <div class="status-dot meeting"></div>
+            <div class="avatar-body" style="background: #0891b2;"></div>
+            <div class="avatar-legs"><div class="avatar-leg"></div><div class="avatar-leg"></div></div>
+          </div>
+          <div class="avatar-nametag">
+            <span class="nametag-name">강데브옵스</span>
+            <span class="nametag-role">DevOps</span>
+          </div>
+        </div>
+        <div class="tooltip">
+          <span class="tooltip-task">🚀 서버 인프라 스케일업 회의</span>
+          <span class="tooltip-time">트래픽 3배 증가 대응</span>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!--  LOUNGE (라운지)                     -->
+      <!-- ═══════════════════════════════════ -->
+
+      <!-- Couch -->
+      <div class="couch" style="left: 600px; top: 470px; width: 120px;">
+        <div style="position:relative;">
+          <div class="couch-back" style="width:120px;"></div>
+          <div class="couch-seat" style="width:120px; position:relative;">
+            <div class="couch-arm left"></div>
+            <div class="couch-arm right"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plant 1 -->
+      <div class="plant" style="left: 590px; top: 430px;">
+        <div class="plant-leaf-wrap"></div>
+        <div class="plant-pot" style="background: linear-gradient(135deg, #c2440a, #a03308);"></div>
+      </div>
+      <div class="plant" style="left: 588px; top: 430px;">
+        <div class="plant-leaf-wrap">
+          <div class="plant-leaf"></div>
+          <div class="plant-leaf"></div>
+          <div class="plant-leaf"></div>
+        </div>
+        <div class="plant-pot" style="background: linear-gradient(135deg, #c2440a, #a03308);"></div>
+      </div>
+
+      <!-- Plant 2 -->
+      <div class="plant" style="left: 990px; top: 445px;">
+        <div class="plant-leaf-wrap">
+          <div class="plant-leaf" style="background:#166534;"></div>
+          <div class="plant-leaf" style="background:#15803d;"></div>
+          <div class="plant-leaf" style="background:#16a34a;"></div>
+        </div>
+        <div class="plant-pot" style="background: linear-gradient(135deg, #7c3aed, #6d28d9);"></div>
+      </div>
+
+      <!-- Coffee machine -->
+      <div class="coffee-machine" style="left: 760px; top: 455px;">
+        <div class="coffee-body">
+          <div class="coffee-screen"></div>
+          <div class="coffee-dispenser"></div>
+          <div class="coffee-cup"></div>
+        </div>
+      </div>
+
+      <!-- Desk 10 — 오PM (Product Manager) in lounge -->
+      <div class="iso-desk" style="left: 820px; top: 500px;"
+           onclick="openProfile(9)">
+        <div class="desk-body">
+          <div class="desk-top" style="background: linear-gradient(135deg, #c8e6c9, #a5d6a7);"></div>
+          <div class="desk-front" style="background: #66bb6a;"></div>
+          <div class="desk-side" style="background: #43a047;"></div>
+          <div class="desk-shadow"></div>
+        </div>
+        <div class="monitor">
+          <div class="monitor-screen"></div>
+          <div class="monitor-stand" style="width:8px;height:5px;background:#374151;margin:0 auto;"></div>
+          <div class="monitor-base"></div>
+        </div>
+        <div class="avatar-wrap" style="--idle-speed:2.9s;">
+          <div class="avatar-figure">
+            <div class="avatar-head" style="background: #f0c27f;">
+              <div class="avatar-hair" style="background: #111827;"></div>
+              <div class="avatar-face"></div>
+            </div>
+            <div class="status-dot active"></div>
+            <div class="avatar-body" style="background: #16a34a;"></div>
+            <div class="avatar-legs"><div class="avatar-leg"></div><div class="avatar-leg"></div></div>
+          </div>
+          <div class="avatar-nametag">
+            <span class="nametag-name">오피엠</span>
+            <span class="nametag-role">프로덕트</span>
+          </div>
+        </div>
+        <div class="tooltip">
+          <span class="tooltip-task">📋 스프린트 플래닝 문서 작성</span>
+          <span class="tooltip-time">v2.0 로드맵 정리 중</span>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════ -->
+      <!--  FLOATING ACTIVITY BADGES           -->
+      <!-- ═══════════════════════════════════ -->
+
+      <div class="activity-badge" style="left: 50px; top: 380px; animation-delay: 0s;">
+        <div class="activity-badge-dot" style="background: var(--green);"></div>
+        <span>기사 3건 초안 완성</span>
+      </div>
+
+      <div class="activity-badge" style="left: 560px; top: 390px; animation-delay: 1.5s;">
+        <div class="activity-badge-dot" style="background: #7c3aed;"></div>
+        <span>PR #142 머지 완료</span>
+      </div>
+
+      <div class="activity-badge" style="left: 280px; top: 390px; animation-delay: 0.8s;">
+        <div class="activity-badge-dot" style="background: var(--accent);"></div>
+        <span>파트너십 계약 검토 중</span>
+      </div>
+
+      <div class="activity-badge" style="left: 730px; top: 680px; animation-delay: 2s;">
+        <div class="activity-badge-dot" style="background: var(--green);"></div>
+        <span>스프린트 78% 완료</span>
+      </div>
+
+    </div><!-- iso-world -->
+  </div><!-- iso-stage -->
+</main>
+
+<!-- ── PROFILE CARD ── -->
+<div class="profile-overlay" id="profileOverlay" onclick="closeProfile()"></div>
+<div class="profile-card" id="profileCard">
+  <div class="profile-card-header">
+    <button class="profile-close" onclick="closeProfile()">✕</button>
+    <div class="profile-avatar-lg" id="profileEmoji"></div>
+    <div class="profile-name" id="profileName"></div>
+    <div class="profile-role-badge" id="profileRole"></div>
+    <div class="profile-current-task">
+      <div class="task-indicator" id="profileTaskIndicator"></div>
+      <span id="profileTask"></span>
+    </div>
+  </div>
+  <div class="profile-body">
+    <div class="profile-section-title">이달 성과</div>
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <span class="profile-stat-value" id="stat1val">—</span>
+        <span class="profile-stat-label" id="stat1label">—</span>
+      </div>
+      <div class="profile-stat">
+        <span class="profile-stat-value" id="stat2val">—</span>
+        <span class="profile-stat-label" id="stat2label">—</span>
+      </div>
+      <div class="profile-stat">
+        <span class="profile-stat-value" id="stat3val">—</span>
+        <span class="profile-stat-label" id="stat3label">—</span>
+      </div>
+    </div>
+
+    <div class="profile-section-title">최근 기여</div>
+    <div class="article-list" id="profileArticles"></div>
+
+    <button class="contact-btn">
+      💬 메시지 보내기
+    </button>
+  </div>
+</div>
+
+<script>
+// ── PARTICLE SYSTEM ──
+(function() {
+  const container = document.getElementById('particles');
+  const count = 18;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 5 + 2;
+    p.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${Math.random() * 100}%;
+      top: ${Math.random() * 100}%;
+      --dur: ${Math.random() * 8 + 6}s;
+      --delay: ${Math.random() * 8}s;
+    `;
+    container.appendChild(p);
+  }
+})();
+
+// ── TEAM DATA ──
+const team = [
+  {
+    emoji: '📝', name: '김편집', role: '편집장',
+    status: 'active',
+    task: 'AI 투자 시그널 기사 최종 검토 중',
+    stats: [
+      {v:'14', l:'발행 기사'},
+      {v:'4.8k', l:'월간 조회'},
+      {v:'98%', l:'마감률'}
+    ],
+    articles: [
+      {icon:'📈', title:'AI 투자 시그널 — 2026 Q2 분석', meta:'2시간 전 · 검토 완료', badge:'게시됨'},
+      {icon:'🤖', title:'클로드 코드 소네트 프리뷰 발표', meta:'어제 · 발행됨', badge:'게시됨'},
+      {icon:'💡', title:'바이브코딩으로 1인 스타트업 도전기', meta:'3일 전 · 발행됨', badge:'게시됨'},
+    ]
+  },
+  {
+    emoji: '✍️', name: '이기자', role: '선임기자',
+    status: 'active',
+    task: '클로드 코드 오토모드 기사 작성 중',
+    stats: [
+      {v:'22', l:'발행 기사'},
+      {v:'12k', l:'월간 조회'},
+      {v:'95%', l:'마감률'}
+    ],
+    articles: [
+      {icon:'🚀', title:'Claude Code Auto Mode 완전 분석', meta:'작업 중 · 초안', badge:'초안', badgeClass:'draft'},
+      {icon:'📱', title:'조코딩 AX 파트너스 데모데이 현장', meta:'어제 · 발행됨', badge:'게시됨'},
+      {icon:'🎯', title:'MCP 4대 필수 서버 정리', meta:'4일 전 · 발행됨', badge:'게시됨'},
+    ]
+  },
+  {
+    emoji: '🎨', name: '박에디터', role: '에디터',
+    status: 'meeting',
+    task: '편집 회의 참여 중 (화상)',
+    stats: [
+      {v:'8', l:'편집 완료'},
+      {v:'3.2k', l:'월간 조회'},
+      {v:'100%', l:'품질점수'}
+    ],
+    articles: [
+      {icon:'📰', title:'바이브 디자인 멤버십 런칭 기사', meta:'오늘 · 편집 완료', badge:'게시됨'},
+      {icon:'💼', title:'비바리퍼블리카 시리즈D 투자 유치', meta:'2일 전 · 편집됨', badge:'게시됨'},
+      {icon:'🌟', title:'K-스타트업 글로벌 진출 특집', meta:'1주일 전 · 발행됨', badge:'게시됨'},
+    ]
+  },
+  {
+    emoji: '🖼️', name: '최콘텐츠', role: '콘텐츠 디렉터',
+    status: 'active',
+    task: '바이브코딩 기사 썸네일 디자인 중',
+    stats: [
+      {v:'31', l:'콘텐츠 제작'},
+      {v:'20k', l:'SNS 노출'},
+      {v:'4.2', l:'평균 평점'}
+    ],
+    articles: [
+      {icon:'🎬', title:'쇼츠 — AI 일상 코딩 데일리', meta:'오늘 · 작업 중', badge:'초안', badgeClass:'draft'},
+      {icon:'📊', title:'파운더스코리아 4월 콘텐츠 캘린더', meta:'어제 · 완료', badge:'게시됨'},
+      {icon:'🤝', title:'파운더-투자자 매칭 이벤트 홍보', meta:'3일 전 · 발행됨', badge:'게시됨'},
+    ]
+  },
+  {
+    emoji: '📊', name: '정전략', role: '전략이사',
+    status: 'meeting',
+    task: 'Q2 광고 전략 보고서 작성 중',
+    stats: [
+      {v:'₩2.3억', l:'이달 매출'},
+      {v:'18%', l:'성장률'},
+      {v:'12', l:'파트너사'}
+    ],
+    articles: [
+      {icon:'💰', title:'파운더스코리아 광고 상품 개편안', meta:'작업 중', badge:'초안', badgeClass:'draft'},
+      {icon:'🏆', title:'2026 스타트업 미디어 전략 리포트', meta:'지난주 · 완료', badge:'게시됨'},
+      {icon:'📈', title:'구독 전환율 개선 실험 결과', meta:'2주 전 · 발행됨', badge:'게시됨'},
+    ]
+  },
+  {
+    emoji: '🤝', name: '한파트너', role: '파트너십 매니저',
+    status: 'away',
+    task: '외부 파트너사 미팅 중 (외출)',
+    stats: [
+      {v:'7', l:'계약 건'},
+      {v:'3', l:'진행중'},
+      {v:'₩8k만', l:'계약액'}
+    ],
+    articles: [
+      {icon:'🌐', title:'글로벌 VC 네트워크 파트너십 체결', meta:'3일 전 · 발행됨', badge:'게시됨'},
+      {icon:'🎪', title:'2026 스타트업 서밋 공동 주최', meta:'1주일 전 · 완료', badge:'게시됨'},
+    ]
+  },
+  {
+    emoji: '💻', name: '송개발', role: '풀스택 개발자',
+    status: 'active',
+    task: 'Article Pool API v2 배포 중',
+    stats: [
+      {v:'47', l:'커밋'},
+      {v:'99.9%', l:'업타임'},
+      {v:'12ms', l:'응답속도'}
+    ],
+    articles: [
+      {icon:'⚡', title:'Article Pool 시스템 — API 기반 기사 관리', meta:'오늘 · 배포 중', badge:'초안', badgeClass:'draft'},
+      {icon:'🔧', title:'파운더스코리아 v4 기술 스택 전환', meta:'지난주 · 완료', badge:'게시됨'},
+      {icon:'🛡️', title:'CDN 최적화로 로딩 속도 60% 개선', meta:'2주 전 · 완료', badge:'게시됨'},
+    ]
+  },
+  {
+    emoji: '🎨', name: '윤디자인', role: 'UI/UX 디자이너',
+    status: 'active',
+    task: '아이소메트릭 오피스 Concept A 목업',
+    stats: [
+      {v:'15', l:'디자인 시스템'},
+      {v:'4.9', l:'사용자 점수'},
+      {v:'3', l:'목업 완성'}
+    ],
+    articles: [
+      {icon:'🏠', title:'Concept A — 아이소메트릭 오피스 목업', meta:'오늘 · 작업 중', badge:'초안', badgeClass:'draft'},
+      {icon:'🖌️', title:'파운더스코리아 Design System v2', meta:'지난주 · 완료', badge:'게시됨'},
+      {icon:'📐', title:'뉴스룸 레이아웃 리뉴얼 가이드', meta:'2주 전 · 발행됨', badge:'게시됨'},
+    ]
+  },
+  {
+    emoji: '🚀', name: '강데브옵스', role: 'DevOps 엔지니어',
+    status: 'meeting',
+    task: '인프라 스케일업 아키텍처 회의 중',
+    stats: [
+      {v:'99.98%', l:'가용성'},
+      {v:'3x', l:'용량 확장'},
+      {v:'0', l:'장애 건수'}
+    ],
+    articles: [
+      {icon:'🌊', title:'트래픽 3배 급증 대응 — k8s 오토스케일', meta:'오늘 · 회의 중', badge:'초안', badgeClass:'draft'},
+      {icon:'🔒', title:'보안 감사 통과 — SOC2 준비 완료', meta:'어제 · 완료', badge:'게시됨'},
+      {icon:'📊', title:'월간 인프라 비용 최적화 리포트', meta:'1주일 전 · 완료', badge:'게시됨'},
+    ]
+  },
+  {
+    emoji: '📋', name: '오피엠', role: '프로덕트 매니저',
+    status: 'active',
+    task: '스프린트 플래닝 v2.0 문서 작성 중',
+    stats: [
+      {v:'8', l:'스프린트'},
+      {v:'78%', l:'완료율'},
+      {v:'v2.1', l:'현재 버전'}
+    ],
+    articles: [
+      {icon:'📋', title:'파운더스코리아 v2.0 로드맵 공개', meta:'작업 중', badge:'초안', badgeClass:'draft'},
+      {icon:'🎯', title:'사용자 피드백 분석 — NPS 72 달성', meta:'어제 · 완료', badge:'게시됨'},
+      {icon:'🔍', title:'독자 리텐션 개선 실험 결과', meta:'3일 전 · 발행됨', badge:'게시됨'},
+    ]
+  },
+];
+
+// ── PROFILE CARD FUNCTIONS ──
+function openProfile(idx) {
+  const p = team[idx];
+  if (!p) return;
+
+  document.getElementById('profileEmoji').textContent = p.emoji;
+  document.getElementById('profileName').textContent = p.name;
+  document.getElementById('profileRole').textContent = p.role;
+  document.getElementById('profileTask').textContent = p.task;
+
+  const ind = document.getElementById('profileTaskIndicator');
+  ind.style.background = p.status === 'active' ? 'var(--green)'
+    : p.status === 'meeting' ? 'var(--yellow)' : 'var(--gray)';
+  if (p.status !== 'active') ind.style.animation = 'none';
+
+  const stats = [
+    document.getElementById('stat1val'),
+    document.getElementById('stat2val'),
+    document.getElementById('stat3val'),
+  ];
+  const labels = [
+    document.getElementById('stat1label'),
+    document.getElementById('stat2label'),
+    document.getElementById('stat3label'),
+  ];
+  p.stats.forEach((s, i) => {
+    stats[i].textContent = s.v;
+    labels[i].textContent = s.l;
+  });
+
+  const articleList = document.getElementById('profileArticles');
+  articleList.innerHTML = p.articles.map(a => `
+    <div class="article-item">
+      <div class="article-icon">${a.icon}</div>
+      <div class="article-info">
+        <div class="article-title">${a.title}</div>
+        <div class="article-meta">${a.meta}</div>
+      </div>
+      <div class="article-badge ${a.badgeClass || ''}">${a.badge}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('profileOverlay').classList.add('open');
+  document.getElementById('profileCard').classList.add('open');
+}
+
+function closeProfile() {
+  document.getElementById('profileOverlay').classList.remove('open');
+  document.getElementById('profileCard').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeProfile();
+});
+</script>
+</body>
+</html>

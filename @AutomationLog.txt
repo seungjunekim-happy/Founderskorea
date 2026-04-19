@@ -1,0 +1,2 @@
+2026-04-16 18:06:59.742 ylw_diag3.py[131] <module> -> Find Control Timeout(10s): {AutomationId: 'cboMenuFunction', ControlType: ComboBoxControl}
+2026-04-16 18:08:01.436 ylw_diag4.py[113] <module> -> Find Control Timeout(10s): {AutomationId: 'cmbModule', ControlType: ComboBoxControl}

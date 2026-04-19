@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>파운더스코리아 월드 — 인터랙티브</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Noto Sans KR', sans-serif;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  #top-bar {
+    width: 800px;
+    height: 44px;
+    background: linear-gradient(90deg, #0f0f1e 0%, #16213e 50%, #0f0f1e 100%);
+    border: 2px solid #e94560;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    position: relative;
+  }
+
+  #top-bar .title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: #e94560;
+    text-shadow: 0 0 8px #e94560, 0 0 16px #e9456055;
+    letter-spacing: 1px;
+  }
+
+  #top-bar .subtitle {
+    font-size: 10px;
+    color: #a0aec0;
+    font-weight: 500;
+  }
+
+  #game-wrapper {
+    position: relative;
+    width: 800px;
+    height: 600px;
+  }
+
+  #game-canvas {
+    display: block;
+    border: 2px solid #e94560;
+    border-top: 1px solid #e9456088;
+    cursor: default;
+    image-rendering: pixelated;
+  }
+
+  /* Right panel */
+  #profile-panel {
+    position: absolute;
+    top: 0;
+    right: -280px;
+    width: 260px;
+    height: 100%;
+    background: linear-gradient(180deg, #0d0d1f 0%, #111128 100%);
+    border-left: 2px solid #e94560;
+    transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    overflow: hidden;
+  }
+
+  #profile-panel.open {
+    right: 0;
+  }
+
+  .panel-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid #e94560;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+
+  .panel-name {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 2px;
+  }
+
+  .panel-role {
+    font-size: 11px;
+    color: #e94560;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .panel-status {
+    display: inline-block;
+    background: #1b4332;
+    color: #40c074;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin: 0 auto 12px;
+    display: block;
+    text-align: center;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .panel-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e9456044, transparent);
+    margin: 8px 0;
+  }
+
+  .panel-section-title {
+    font-size: 10px;
+    color: #7c8fa6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  .panel-task {
+    background: #16213e;
+    border-left: 3px solid #e94560;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: #cbd5e0;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .panel-articles {
+    list-style: none;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .panel-articles::-webkit-scrollbar { width: 3px; }
+  .panel-articles::-webkit-scrollbar-track { background: transparent; }
+  .panel-articles::-webkit-scrollbar-thumb { background: #e9456044; border-radius: 2px; }
+
+  .panel-articles li {
+    font-size: 10px;
+    color: #a0aec0;
+    padding: 5px 0;
+    border-bottom: 1px solid #1e2740;
+    line-height: 1.4;
+    cursor: default;
+    transition: color 0.15s;
+  }
+
+  .panel-articles li:hover { color: #e94560; }
+  .panel-articles li::before { content: "▸ "; color: #e94560; }
+
+  .panel-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, #e94560, #c73652);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: opacity 0.15s;
+  }
+
+  .panel-btn:hover { opacity: 0.85; }
+
+  #panel-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: 1px solid #e9456055;
+    color: #e94560;
+    width: 22px;
+    height: 22px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+  #panel-close:hover { background: #e9456022; }
+
+  /* Bottom bar */
+  #bottom-bar {
+    width: 800px;
+    height: 34px;
+    background: #0f0f1e;
+    border: 2px solid #e94560;
+    border-top: 1px solid #e9456066;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .hint {
+    font-size: 10px;
+    color: #7c8fa6;
+    font-weight: 500;
+  }
+
+  .hint kbd {
+    display: inline-block;
+    background: #16213e;
+    border: 1px solid #2d3a5a;
+    border-radius: 3px;
+    padding: 0px 5px;
+    font-size: 9px;
+    color: #e2e8f0;
+    font-family: 'Press Start 2P', monospace;
+    margin: 0 2px;
+  }
+
+  /* Minimap overlay */
+  #minimap-canvas {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    border: 1px solid #e9456066;
+    border-radius: 2px;
+    image-rendering: pixelated;
+  }
+</style>
+</head>
+<body>
+
+<div id="top-bar">
+  <span class="title">파운더스코리아 WORLD</span>
+  <span class="subtitle">인터랙티브 오피스 탐험</span>
+</div>
+
+<div id="game-wrapper">
+  <canvas id="game-canvas" width="800" height="600"></canvas>
+  <canvas id="minimap-canvas" width="100" height="75"></canvas>
+
+  <div id="profile-panel">
+    <button id="panel-close">✕</button>
+    <div class="panel-avatar" id="panel-avatar-el">김</div>
+    <div class="panel-name" id="panel-name-el">김민준</div>
+    <div class="panel-role" id="panel-role-el">편집장</div>
+    <div class="panel-status" id="panel-status-el">● 근무 중</div>
+    <div class="panel-divider"></div>
+    <div class="panel-section-title">현재 작업</div>
+    <div class="panel-task" id="panel-task-el">AI 스타트업 생태계 분석 기사 작성 중</div>
+    <div class="panel-divider"></div>
+    <div class="panel-section-title">최근 기사</div>
+    <ul class="panel-articles" id="panel-articles-el"></ul>
+    <button class="panel-btn">대화하기</button>
+  </div>
+</div>
+
+<div id="bottom-bar">
+  <span class="hint"><kbd>↑↓←→</kbd> 또는 <kbd>WASD</kbd> 이동</span>
+  <span class="hint"><kbd>SPACE</kbd> 대화하기</span>
+  <span class="hint"><kbd>ESC</kbd> 패널 닫기</span>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  CONSTANTS & WORLD DATA
+// ─────────────────────────────────────────────
+const TILE = 32;
+const COLS = 25; // 800 / 32
+const ROWS = 19; // ~600 / 32 (608, slightly over, clamp)
+const W = 800;
+const H = 600;
+
+// Color palette
+const PAL = {
+  wallDark:    '#1a1a3e',
+  wallMid:     '#252550',
+  wallAccent:  '#e94560',
+  floorLight:  '#f5ede0',
+  floorDark:   '#ede0cc',
+  floorAlt:    '#e8d6be',
+  deskBrown:   '#7c5c38',
+  deskLight:   '#a07848',
+  monitorDark: '#0d1117',
+  monitorBlue: '#1e40af',
+  monitorGlow: '#3b82f6',
+  serverGray:  '#374151',
+  serverGreen: '#10b981',
+  wbWhite:     '#f0f4f8',
+  wbFrame:     '#6b7280',
+  sofaBlue:    '#2563eb',
+  sofaLight:   '#3b82f6',
+  plantGreen:  '#16a34a',
+  plantDark:   '#14532d',
+  chairGray:   '#9ca3af',
+  tableWood:   '#92400e',
+  coffeeBrown: '#78350f',
+  doorway:     '#2a2050',
+  bg:          '#1a1a2e',
+  roomLabel:   '#ffffffcc',
+};
+
+// ─────────────────────────────────────────────
+//  TILE MAP  (0=floor, 1=wall, 2=doorway/open)
+// ─────────────────────────────────────────────
+// Build procedurally
+const tileMap = [];
+for (let r = 0; r < ROWS; r++) {
+  tileMap[r] = [];
+  for (let c = 0; c < COLS; c++) {
+    // perimeter wall
+    if (r === 0 || r === ROWS-1 || c === 0 || c === COLS-1) {
+      tileMap[r][c] = 1;
+    } else {
+      tileMap[r][c] = 0;
+    }
+  }
+}
+
+// Internal horizontal divider (mid-row ~9)
+const midRow = 9;
+for (let c = 1; c < COLS-1; c++) {
+  tileMap[midRow][c] = 1;
+}
+// Doorways in horizontal divider: left room ~col 5-7, right room ~col 17-19
+for (let c = 5; c <= 7; c++) tileMap[midRow][c] = 0;
+for (let c = 17; c <= 19; c++) tileMap[midRow][c] = 0;
+
+// Internal vertical divider (mid-col ~12)
+const midCol = 12;
+for (let r = 1; r < ROWS-1; r++) {
+  tileMap[r][midCol] = 1;
+}
+// Doorways in vertical divider: top row ~row 3-5, bottom row ~row 12-14
+for (let r = 3; r <= 5; r++) tileMap[r][midCol] = 0;
+for (let r = 12; r <= 14; r++) tileMap[r][midCol] = 0;
+// Keep intersection open
+tileMap[midRow][midCol] = 1;
+
+// ─────────────────────────────────────────────
+//  SOLID OBJECTS (furniture bounding boxes)
+//  format: {x, y, w, h} in pixel coords
+// ─────────────────────────────────────────────
+const solidObjects = [];
+
+function addSolid(x, y, w, h) {
+  solidObjects.push({x, y, w, h});
+}
+
+// ── 편집국 (top-left) desks ──
+// Desk row 1
+addSolid(48,  48,  80, 28);  // desk1
+addSolid(48, 108,  80, 28);  // desk2
+addSolid(160, 48,  80, 28);  // desk3
+addSolid(160, 108, 80, 28);  // desk4
+// Desk row 2 (near wall)
+addSolid(260, 48,  64, 28);  // desk5
+addSolid(260, 108, 64, 28);  // desk6
+
+// ── 전략실 (top-right) whiteboard + chairs ──
+addSolid(450, 48,  120, 24); // whiteboard (along top wall)
+addSolid(450, 90,   40, 28); // table
+addSolid(510, 90,   40, 28); // table2
+addSolid(560, 90,   40, 28); // table3
+
+// ── 기술팀 (bottom-left) servers ──
+addSolid(48,  350,  40, 80);  // server rack 1
+addSolid(100, 350,  40, 80);  // server rack 2
+addSolid(152, 350,  40, 80);  // server rack 3
+addSolid(48,  460,  80, 28);  // dev desk 1
+addSolid(150, 460,  80, 28);  // dev desk 2
+addSolid(260, 460,  80, 28);  // dev desk 3
+
+// ── 라운지 (bottom-right) sofa + table ──
+addSolid(460, 360,  130, 40); // sofa
+addSolid(480, 430,   90, 40); // coffee table
+addSolid(620, 360,   32, 80); // plant cluster (decoration, solid)
+addSolid(620, 460,   32, 80); // plant2
+
+// ─────────────────────────────────────────────
+//  NPCs
+// ─────────────────────────────────────────────
+const NPC_DATA = [
+  {
+    id: 0, name: '김민준', role: '편집장', color: '#e94560', bodyColor: '#7f1d1d',
+    x: 88, y: 72, room: '편집국',
+    task: 'AI 스타트업 생태계 분석 기사 작성 중. 내일 오전 마감 예정.',
+    bubble: '기사 마감 오늘까지!',
+    status: '근무 중',
+    articles: ['클로드 코드로 혼자 스타트업 만들기', 'AI 투자 시그널 2025', '한국 창업 생태계 리포트']
+  },
+  {
+    id: 1, name: '이서연', role: '수석 기자', color: '#f59e0b', bodyColor: '#92400e',
+    x: 200, y: 72, room: '편집국',
+    task: '비케이더블유 Series B 투자 라운드 취재 중. 창업자 인터뷰 초안 검토.',
+    bubble: '인터뷰 자료 정리 중...',
+    status: '취재 중',
+    articles: ['Vibe Coding으로 월 1억 매출', 'AI 설계사무소 등장', 'GPT-5 창업자 활용법']
+  },
+  {
+    id: 2, name: '박준혁', role: '데이터 기자', color: '#10b981', bodyColor: '#064e3b',
+    x: 88, y: 132, room: '편집국',
+    task: '스타트업 투자 데이터 시각화 작업. Python 스크립트로 그래프 생성 중.',
+    bubble: '데이터 시각화 완성!',
+    status: '작업 중',
+    articles: ['2025 VC 투자 트렌드 분석', '유니콘 성장 데이터', '스타트업 실패율 리포트']
+  },
+  {
+    id: 3, name: '최지은', role: '전략 에디터', color: '#8b5cf6', bodyColor: '#4c1d95',
+    x: 510, y: 72, room: '전략실',
+    task: '파운더스코리아 Q2 콘텐츠 전략 기획 중. OKR 달성률 리뷰.',
+    bubble: 'Q2 전략 브리핑 준비 중',
+    status: '회의 준비',
+    articles: ['콘텐츠 커머스 전략 2025', '뉴스레터 성장 해킹', '미디어 스타트업 생존법']
+  },
+  {
+    id: 4, name: '정우성', role: '비즈니스 개발', color: '#06b6d4', bodyColor: '#0e4f6b',
+    x: 560, y: 120, room: '전략실',
+    task: '파트너십 제안서 작성. 조코딩 AX 파트너스 협력 방안 검토 중.',
+    bubble: '파트너십 미팅 준비!',
+    status: '근무 중',
+    articles: ['조코딩 AX 파트너스 론칭', 'B2B SaaS 파트너 전략', '스타트업 BD 가이드']
+  },
+  {
+    id: 5, name: '한소희', role: '풀스택 개발자', color: '#f97316', bodyColor: '#7c2d12',
+    x: 200, y: 490, room: '기술팀',
+    task: '파운더스코리아 웹사이트 새 기능 개발 중. React + Next.js 마이그레이션.',
+    bubble: '빌드 성공! 🎉',
+    status: '개발 중',
+    articles: ['Vibe Coding 기초 가이드', 'Claude Code MCP 활용', '1인 스타트업 기술 스택']
+  },
+  {
+    id: 6, name: '오동훈', role: '백엔드 엔지니어', color: '#84cc16', bodyColor: '#365314',
+    x: 88, y: 490, room: '기술팀',
+    task: 'API 서버 최적화. 기사 추천 알고리즘 A/B 테스트 진행 중.',
+    bubble: 'API 응답속도 50% 향상!',
+    status: '테스트 중',
+    articles: ['Claude API 통합 가이드', 'MCP 4가지 필수 도구', '서버리스 아키텍처 전환']
+  },
+  {
+    id: 7, name: '윤하린', role: '디자이너', color: '#ec4899', bodyColor: '#831843',
+    x: 530, y: 400, room: '라운지',
+    task: '새 인터랙티브 UI 컨셉 스케치 중. 파운더스코리아 리브랜딩 아이디어 정리.',
+    bubble: '커피 한 잔이 필요해... ☕',
+    status: '휴식 중',
+    articles: ['Vibe Design 멤버십 소개', 'AI 디자인 툴 비교', '스타트업 브랜딩 가이드']
+  },
+];
+
+// ─────────────────────────────────────────────
+//  PLAYER
+// ─────────────────────────────────────────────
+const player = {
+  x: 380, y: 320, // starts in corridor
+  w: 20, h: 20,
+  speed: 2.5,
+  color: '#ffffff',
+  bodyColor: '#2563eb',
+  bobOffset: 0,
+  bobTimer: 0,
+};
+
+// ─────────────────────────────────────────────
+//  INPUT
+// ─────────────────────────────────────────────
+const keys = {};
+document.addEventListener('keydown', e => {
+  keys[e.key] = true;
+  if (e.key === 'Escape') closePanel();
+  if (e.key === ' ') {
+    e.preventDefault();
+    tryInteract();
+  }
+  // prevent scroll
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
+});
+document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+// ─────────────────────────────────────────────
+//  PANEL
+// ─────────────────────────────────────────────
+let activeNPC = null;
+const panel = document.getElementById('profile-panel');
+const panelClose = document.getElementById('panel-close');
+panelClose.addEventListener('click', closePanel);
+
+function openPanel(npc) {
+  activeNPC = npc;
+  document.getElementById('panel-avatar-el').textContent = npc.name[0];
+  document.getElementById('panel-avatar-el').style.background = npc.color;
+  document.getElementById('panel-name-el').textContent = npc.name;
+  document.getElementById('panel-role-el').textContent = npc.role;
+  document.getElementById('panel-status-el').textContent = '● ' + npc.status;
+  document.getElementById('panel-task-el').textContent = npc.task;
+  const ul = document.getElementById('panel-articles-el');
+  ul.innerHTML = '';
+  npc.articles.forEach(a => {
+    const li = document.createElement('li');
+    li.textContent = a;
+    ul.appendChild(li);
+  });
+  panel.classList.add('open');
+}
+
+function closePanel() {
+  panel.classList.remove('open');
+  activeNPC = null;
+}
+
+function tryInteract() {
+  const nearNPC = getNearestNPC(48);
+  if (nearNPC) openPanel(nearNPC);
+}
+
+function getNearestNPC(range) {
+  let best = null, bestDist = Infinity;
+  NPC_DATA.forEach(npc => {
+    const dx = npc.x - (player.x + 10);
+    const dy = npc.y - (player.y + 10);
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < range && dist < bestDist) {
+      best = npc;
+      bestDist = dist;
+    }
+  });
+  return best;
+}
+
+// ─────────────────────────────────────────────
+//  COLLISION
+// ─────────────────────────────────────────────
+function rectOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
+  return ax < bx+bw && ax+aw > bx && ay < by+bh && ay+ah > by;
+}
+
+function isTileWall(px, py) {
+  const col = Math.floor(px / TILE);
+  const row = Math.floor(py / TILE);
+  if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return true;
+  return tileMap[row][col] === 1;
+}
+
+function isSolidAt(nx, ny) {
+  const pw = player.w, ph = player.h;
+  // Check tile corners
+  const corners = [
+    [nx, ny], [nx+pw-1, ny], [nx, ny+ph-1], [nx+pw-1, ny+ph-1]
+  ];
+  for (const [cx, cy] of corners) {
+    if (isTileWall(cx, cy)) return true;
+  }
+  // Check furniture
+  for (const obj of solidObjects) {
+    if (rectOverlap(nx, ny, pw, ph, obj.x, obj.y, obj.w, obj.h)) return true;
+  }
+  return false;
+}
+
+// ─────────────────────────────────────────────
+//  ANIMATION STATE
+// ─────────────────────────────────────────────
+let tick = 0;
+const npcBob = NPC_DATA.map((_, i) => i * 0.4); // phase offsets
+
+// Blinking server lights
+const serverLights = [];
+for (let i = 0; i < 9; i++) serverLights.push(Math.random() * Math.PI * 2);
+
+// Steam particles
+const steamParts = [];
+function spawnSteam() {
+  if (steamParts.length < 12) {
+    steamParts.push({ x: 534 + Math.random()*8, y: 450, vy: -0.4 - Math.random()*0.3, life: 1.0 });
+  }
+}
+
+// ─────────────────────────────────────────────
+//  DRAWING HELPERS
+// ─────────────────────────────────────────────
+const canvas = document.getElementById('game-canvas');
+const ctx = canvas.getContext('2d');
+
+function drawTiles() {
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const x = c * TILE, y = r * TILE;
+      const t = tileMap[r][c];
+      if (t === 1) {
+        // Wall
+        ctx.fillStyle = PAL.wallDark;
+        ctx.fillRect(x, y, TILE, TILE);
+        // Top highlight
+        ctx.fillStyle = PAL.wallMid;
+        ctx.fillRect(x, y, TILE, 3);
+        ctx.fillRect(x, y, 3, TILE);
+        // Accent dots on wall (every 4 tiles)
+        if ((r + c) % 4 === 0) {
+          ctx.fillStyle = '#2a2a5a';
+          ctx.fillRect(x+13, y+13, 6, 6);
+        }
+      } else {
+        // Floor — checkerboard pattern
+        const even = (r + c) % 2 === 0;
+        ctx.fillStyle = even ? PAL.floorLight : PAL.floorDark;
+        ctx.fillRect(x, y, TILE, TILE);
+        // Subtle grout lines
+        ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(x+0.25, y+0.25, TILE-0.5, TILE-0.5);
+      }
+    }
+  }
+}
+
+function drawDesk(x, y, w, h, hasMonitor=true, facing='right') {
+  // Desk surface
+  ctx.fillStyle = PAL.deskBrown;
+  ctx.fillRect(x, y, w, h);
+  ctx.fillStyle = PAL.deskLight;
+  ctx.fillRect(x+2, y+2, w-4, 6);
+  if (hasMonitor) {
+    const mx = facing === 'right' ? x + w - 20 : x + 4;
+    // Monitor
+    ctx.fillStyle = PAL.monitorDark;
+    ctx.fillRect(mx, y - 18, 16, 14);
+    ctx.fillStyle = PAL.monitorGlow;
+    ctx.fillRect(mx+2, y - 16, 12, 10);
+    // Screen content (tiny lines)
+    ctx.fillStyle = '#93c5fd88';
+    ctx.fillRect(mx+3, y-15, 7, 1);
+    ctx.fillRect(mx+3, y-13, 5, 1);
+    ctx.fillRect(mx+3, y-11, 8, 1);
+    // Stand
+    ctx.fillStyle = '#374151';
+    ctx.fillRect(mx+6, y - 4, 4, 4);
+  }
+}
+
+function drawWhiteboard(x, y) {
+  // Frame
+  ctx.fillStyle = PAL.wbFrame;
+  ctx.fillRect(x, y, 120, 24);
+  // Surface
+  ctx.fillStyle = PAL.wbWhite;
+  ctx.fillRect(x+3, y+3, 114, 18);
+  // Content lines
+  ctx.fillStyle = '#3b82f655';
+  ctx.fillRect(x+8, y+7, 40, 2);
+  ctx.fillRect(x+8, y+11, 60, 2);
+  ctx.fillRect(x+8, y+15, 30, 2);
+  // Marker tray
+  ctx.fillStyle = '#fbbf24';
+  ctx.fillRect(x+5, y+22, 8, 3);
+  ctx.fillStyle = '#10b981';
+  ctx.fillRect(x+15, y+22, 8, 3);
+}
+
+function drawServerRack(x, y, lightPhase) {
+  ctx.fillStyle = PAL.serverGray;
+  ctx.fillRect(x, y, 40, 80);
+  // Front panel lines
+  ctx.fillStyle = '#1f2937';
+  for (let i = 0; i < 8; i++) {
+    ctx.fillRect(x+2, y+4+i*9, 36, 7);
+  }
+  // Blinking LEDs
+  for (let i = 0; i < 4; i++) {
+    const phase = lightPhase + i * 1.2;
+    const on = Math.sin(tick * 0.08 + phase) > 0.2;
+    ctx.fillStyle = on ? PAL.serverGreen : '#064e3b';
+    ctx.fillRect(x+30, y+6+i*16, 5, 3);
+    ctx.fillStyle = (Math.sin(tick * 0.12 + phase + 0.5) > 0.5) ? '#ef4444' : '#7f1d1d';
+    ctx.fillRect(x+30, y+11+i*16, 5, 3);
+  }
+  // Vent slots
+  ctx.fillStyle = '#111827';
+  for (let i = 0; i < 3; i++) {
+    ctx.fillRect(x+4, y+66+i*3, 28, 2);
+  }
+}
+
+function drawSofa(x, y) {
+  // Back
+  ctx.fillStyle = PAL.sofaBlue;
+  ctx.fillRect(x, y, 130, 40);
+  // Seat cushions
+  ctx.fillStyle = PAL.sofaLight;
+  ctx.fillRect(x+4, y+18, 58, 20);
+  ctx.fillRect(x+68, y+18, 58, 20);
+  // Arm rests
+  ctx.fillStyle = '#1d4ed8';
+  ctx.fillRect(x, y, 10, 40);
+  ctx.fillRect(x+120, y, 10, 40);
+  // Highlight
+  ctx.fillStyle = '#93c5fd44';
+  ctx.fillRect(x+4, y+3, 122, 4);
+}
+
+function drawCoffeeTable(x, y) {
+  ctx.fillStyle = PAL.tableWood;
+  ctx.fillRect(x, y, 90, 40);
+  ctx.fillStyle = PAL.coffeeBrown;
+  ctx.fillRect(x+3, y+3, 84, 34);
+  // Coffee mug
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(x+34, y+10, 12, 14);
+  ctx.fillStyle = PAL.coffeeBrown;
+  ctx.fillRect(x+36, y+12, 8, 8);
+  // Magazine
+  ctx.fillStyle = '#e94560';
+  ctx.fillRect(x+52, y+8, 20, 14);
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(x+54, y+10, 16, 3);
+}
+
+function drawPlant(x, y) {
+  // Pot
+  ctx.fillStyle = '#92400e';
+  ctx.fillRect(x+8, y+50, 16, 20);
+  ctx.fillStyle = '#b45309';
+  ctx.fillRect(x+6, y+46, 20, 8);
+  // Leaves
+  ctx.fillStyle = PAL.plantDark;
+  ctx.beginPath();
+  ctx.ellipse(x+16, y+36, 14, 16, -0.3, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = PAL.plantGreen;
+  ctx.beginPath();
+  ctx.ellipse(x+16, y+32, 11, 13, 0.3, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#86efac';
+  ctx.beginPath();
+  ctx.ellipse(x+16, y+28, 6, 8, 0, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function drawChair(x, y, color='#6b7280') {
+  ctx.fillStyle = color;
+  ctx.fillRect(x, y, 20, 20);
+  ctx.fillStyle = '#4b5563';
+  ctx.fillRect(x+2, y+2, 16, 16);
+}
+
+function drawFurniture() {
+  // ── 편집국 (top-left) ──
+  drawDesk(48, 48, 80, 28, true, 'right');
+  drawDesk(48, 108, 80, 28, true, 'right');
+  drawDesk(160, 48, 80, 28, true, 'left');
+  drawDesk(160, 108, 80, 28, true, 'left');
+  drawDesk(260, 48, 64, 28, true, 'right');
+  drawDesk(260, 108, 64, 28, true, 'right');
+  // Chairs
+  drawChair(60, 80, '#4b5563');
+  drawChair(60, 140, '#4b5563');
+  drawChair(170, 80, '#4b5563');
+  drawChair(170, 140, '#4b5563');
+
+  // Room label
+  ctx.font = 'bold 10px "Noto Sans KR"';
+  ctx.fillStyle = '#ffffff44';
+  ctx.fillText('편집국', 50, 240);
+
+  // ── 전략실 (top-right) ──
+  drawWhiteboard(450, 48);
+  drawDesk(450, 90, 40, 28, false);
+  drawDesk(510, 90, 40, 28, false);
+  drawDesk(560, 90, 40, 28, false);
+  drawChair(458, 122, '#7c3aed');
+  drawChair(518, 122, '#7c3aed');
+  drawChair(568, 122, '#7c3aed');
+  ctx.fillStyle = '#ffffff44';
+  ctx.fillText('전략실', 500, 240);
+
+  // ── 기술팀 (bottom-left) ──
+  drawServerRack(48, 350, serverLights[0]);
+  drawServerRack(100, 350, serverLights[1]);
+  drawServerRack(152, 350, serverLights[2]);
+  drawDesk(48, 460, 80, 28, true, 'right');
+  drawDesk(150, 460, 80, 28, true, 'right');
+  drawDesk(260, 460, 80, 28, true, 'left');
+  drawChair(58, 492, '#065f46');
+  drawChair(160, 492, '#065f46');
+  drawChair(270, 492, '#065f46');
+  ctx.fillStyle = '#ffffff44';
+  ctx.fillText('기술팀', 80, 540);
+
+  // ── 라운지 (bottom-right) ──
+  drawSofa(460, 360);
+  drawCoffeeTable(480, 430);
+  drawPlant(620, 340);
+  drawPlant(620, 440);
+  drawChair(475, 475, '#1d4ed8');
+  drawChair(530, 475, '#1d4ed8');
+  drawChair(585, 475, '#1d4ed8');
+  ctx.fillStyle = '#ffffff44';
+  ctx.fillText('라운지', 510, 540);
+}
+
+function drawSteam() {
+  steamParts.forEach(p => {
+    ctx.globalAlpha = p.life * 0.4;
+    ctx.fillStyle = '#e2e8f0';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 2 + (1-p.life)*3, 0, Math.PI*2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+}
+
+// ─────────────────────────────────────────────
+//  DRAW NPC
+// ─────────────────────────────────────────────
+function drawNPC(npc, idx) {
+  const bob = Math.sin(tick * 0.05 + npcBob[idx]) * 2;
+  const cx = npc.x;
+  const cy = npc.y + bob;
+  const nearPlayer = distToPlayer(npc) < 60;
+  const veryNear   = distToPlayer(npc) < 48;
+
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.beginPath();
+  ctx.ellipse(cx, cy+14, 7, 3, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Body
+  ctx.fillStyle = npc.bodyColor;
+  ctx.fillRect(cx-7, cy-2, 14, 14);
+  // Body highlight
+  ctx.fillStyle = npc.color + '88';
+  ctx.fillRect(cx-7, cy-2, 14, 4);
+
+  // Head
+  ctx.fillStyle = npc.color;
+  ctx.beginPath();
+  ctx.arc(cx, cy-8, 7, 0, Math.PI*2);
+  ctx.fill();
+  // Eyes
+  ctx.fillStyle = '#111';
+  ctx.fillRect(cx-3, cy-9, 2, 2);
+  ctx.fillRect(cx+1, cy-9, 2, 2);
+
+  // Name tag
+  ctx.font = '9px "Noto Sans KR"';
+  const label = npc.name;
+  const lw = ctx.measureText(label).width;
+  ctx.fillStyle = 'rgba(15,15,30,0.85)';
+  ctx.fillRect(cx - lw/2 - 5, cy - 26, lw + 10, 13);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillText(label, cx - lw/2, cy - 16);
+
+  // Speech bubble (when near)
+  if (nearPlayer || veryNear) {
+    const bubAlpha = Math.min(1, (60 - distToPlayer(npc)) / 20);
+    ctx.globalAlpha = bubAlpha;
+    const btext = npc.bubble;
+    ctx.font = '8px "Noto Sans KR"';
+    const bw = ctx.measureText(btext).width;
+    const bx = cx - bw/2 - 8;
+    const by = cy - 52;
+    // Bubble background
+    ctx.fillStyle = '#fffbf0';
+    roundRect(ctx, bx, by, bw+16, 18, 4);
+    ctx.fill();
+    ctx.strokeStyle = '#d97706';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    // Tail
+    ctx.fillStyle = '#fffbf0';
+    ctx.beginPath();
+    ctx.moveTo(cx-4, by+18);
+    ctx.lineTo(cx, by+24);
+    ctx.lineTo(cx+4, by+18);
+    ctx.fill();
+    ctx.fillStyle = '#374151';
+    ctx.fillText(btext, bx+8, by+12);
+    ctx.globalAlpha = 1;
+  }
+
+  // Interact hint
+  if (veryNear) {
+    ctx.font = 'bold 8px "Noto Sans KR"';
+    ctx.fillStyle = '#fbbf24';
+    const ht = '[SPACE]';
+    const hw = ctx.measureText(ht).width;
+    ctx.fillText(ht, cx - hw/2, cy + 26);
+  }
+}
+
+function distToPlayer(npc) {
+  const dx = npc.x - (player.x + 10);
+  const dy = npc.y - (player.y + 10);
+  return Math.sqrt(dx*dx + dy*dy);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.arcTo(x+w, y, x+w, y+r, r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.arcTo(x+w, y+h, x+w-r, y+h, r);
+  ctx.lineTo(x+r, y+h);
+  ctx.arcTo(x, y+h, x, y+h-r, r);
+  ctx.lineTo(x, y+r);
+  ctx.arcTo(x, y, x+r, y, r);
+  ctx.closePath();
+}
+
+// ─────────────────────────────────────────────
+//  DRAW PLAYER
+// ─────────────────────────────────────────────
+function drawPlayer() {
+  const bob = Math.sin(tick * 0.12) * 1.5;
+  const px = player.x + 10;
+  const py = player.y + 10 + bob;
+
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  ctx.beginPath();
+  ctx.ellipse(px, py+10, 8, 3, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Body
+  ctx.fillStyle = player.bodyColor;
+  ctx.fillRect(px-7, py, 14, 14);
+  ctx.fillStyle = '#3b82f6';
+  ctx.fillRect(px-7, py, 14, 4);
+
+  // Head
+  ctx.fillStyle = '#fde68a';
+  ctx.beginPath();
+  ctx.arc(px, py-7, 7, 0, Math.PI*2);
+  ctx.fill();
+  // Eyes
+  ctx.fillStyle = '#111';
+  ctx.fillRect(px-3, py-8, 2, 2);
+  ctx.fillRect(px+1, py-8, 2, 2);
+
+  // Name tag
+  ctx.font = 'bold 9px "Noto Sans KR"';
+  ctx.fillStyle = 'rgba(15,15,30,0.9)';
+  ctx.fillRect(px-10, py-24, 20, 13);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText('나', px-4, py-14);
+}
+
+// ─────────────────────────────────────────────
+//  MINIMAP
+// ─────────────────────────────────────────────
+const mmCanvas = document.getElementById('minimap-canvas');
+const mmCtx = mmCanvas.getContext('2d');
+const MM_W = 100, MM_H = 75;
+const scaleX = MM_W / W;
+const scaleY = MM_H / H;
+
+function drawMinimap() {
+  mmCtx.clearRect(0, 0, MM_W, MM_H);
+  // Background
+  mmCtx.fillStyle = '#0d0d1f';
+  mmCtx.fillRect(0, 0, MM_W, MM_H);
+
+  // Tiles
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const x = c * TILE * scaleX, y = r * TILE * scaleY;
+      const tw = TILE * scaleX, th = TILE * scaleY;
+      mmCtx.fillStyle = tileMap[r][c] === 1 ? '#252550' : '#f5ede055';
+      mmCtx.fillRect(x, y, tw, th);
+    }
+  }
+
+  // NPCs
+  NPC_DATA.forEach(npc => {
+    mmCtx.fillStyle = npc.color;
+    mmCtx.beginPath();
+    mmCtx.arc(npc.x * scaleX, npc.y * scaleY, 2.5, 0, Math.PI*2);
+    mmCtx.fill();
+  });
+
+  // Player
+  mmCtx.fillStyle = '#ffffff';
+  mmCtx.beginPath();
+  mmCtx.arc((player.x+10)*scaleX, (player.y+10)*scaleY, 3, 0, Math.PI*2);
+  mmCtx.fill();
+  mmCtx.strokeStyle = '#e94560';
+  mmCtx.lineWidth = 1;
+  mmCtx.stroke();
+}
+
+// ─────────────────────────────────────────────
+//  ROOM LABELS (decorative wall text)
+// ─────────────────────────────────────────────
+function drawRoomLabels() {
+  ctx.save();
+  ctx.font = 'bold 11px "Noto Sans KR"';
+  ctx.textAlign = 'left';
+  // Render room names on walls
+  const rooms = [
+    { label: '편집국', x: 36, y: 14 },
+    { label: '전략실', x: 440, y: 14 },
+    { label: '기술팀', x: 36, y: 314 },
+    { label: '라운지', x: 440, y: 314 },
+  ];
+  rooms.forEach(rm => {
+    ctx.fillStyle = '#e9456099';
+    ctx.fillText(rm.label, rm.x+1, rm.y+1);
+    ctx.fillStyle = '#e94560cc';
+    ctx.fillText(rm.label, rm.x, rm.y);
+  });
+  ctx.restore();
+}
+
+// ─────────────────────────────────────────────
+//  GAME LOOP
+// ─────────────────────────────────────────────
+function update() {
+  tick++;
+
+  // Player movement
+  let dx = 0, dy = 0;
+  if (keys['ArrowLeft']  || keys['a'] || keys['A']) dx -= player.speed;
+  if (keys['ArrowRight'] || keys['d'] || keys['D']) dx += player.speed;
+  if (keys['ArrowUp']    || keys['w'] || keys['W']) dy -= player.speed;
+  if (keys['ArrowDown']  || keys['s'] || keys['S']) dy += player.speed;
+
+  // Diagonal normalization
+  if (dx !== 0 && dy !== 0) {
+    dx *= 0.707;
+    dy *= 0.707;
+  }
+
+  // Try movement with collision
+  const nx = player.x + dx;
+  const ny = player.y + dy;
+
+  if (!isSolidAt(nx, player.y) && nx >= 2 && nx + player.w <= W - 2) player.x = nx;
+  if (!isSolidAt(player.x, ny) && ny >= 2 && ny + player.h <= H - 2) player.y = ny;
+
+  // Steam update
+  if (tick % 8 === 0) spawnSteam();
+  for (let i = steamParts.length - 1; i >= 0; i--) {
+    steamParts[i].y += steamParts[i].vy;
+    steamParts[i].x += Math.sin(tick * 0.05 + i) * 0.2;
+    steamParts[i].life -= 0.015;
+    if (steamParts[i].life <= 0) steamParts.splice(i, 1);
+  }
+}
+
+function render() {
+  // Clear
+  ctx.fillStyle = PAL.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  drawTiles();
+  drawFurniture();
+  drawSteam();
+  drawRoomLabels();
+
+  // Draw NPCs
+  NPC_DATA.forEach((npc, i) => drawNPC(npc, i));
+
+  // Draw player
+  drawPlayer();
+
+  // Minimap
+  drawMinimap();
+
+  // Proximity highlight ring
+  const nearNPC = getNearestNPC(60);
+  if (nearNPC) {
+    const pulse = 0.5 + 0.5 * Math.sin(tick * 0.15);
+    ctx.strokeStyle = `rgba(233,69,96,${pulse * 0.6})`;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.arc(nearNPC.x, nearNPC.y, 30 + pulse * 4, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+function loop() {
+  update();
+  render();
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>

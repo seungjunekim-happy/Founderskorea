@@ -10,3 +10,4 @@ build/
 .idea/
 *.db
 .DS_Store
+.gstack/
